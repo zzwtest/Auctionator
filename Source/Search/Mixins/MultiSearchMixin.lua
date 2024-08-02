@@ -17,7 +17,7 @@ function AuctionatorMultiSearchMixin:OnEvent(event, ...)
 end
 
 function AuctionatorMultiSearchMixin:Search(terms, config)
-  Auctionator.Debug.Message("AuctionatorMultiSearchMixin:Search()", terms)
+  print("AuctionatorMultiSearchMixin:Search()", terms)
 
   self.complete = false
   self.partialResults = {}
@@ -69,6 +69,8 @@ function AuctionatorMultiSearchMixin:NoResultsForTermCheck()
 end
 
 function AuctionatorMultiSearchMixin:NextSearch()
+  --_G["gAuctionatorMultiSearchMixinSelf"] = self
+  --print(AuctionatorMultiSearchMixin,self,self:HasMoreTerms())
   if self:HasMoreTerms() then
     self:NoResultsForTermCheck()
     self.anyResultsForThisTerm = false
@@ -91,3 +93,7 @@ function AuctionatorMultiSearchMixin:NextSearch()
     self.onSearchComplete(self.fullResults)
   end
 end
+
+-- _G["gAuctionatorMultiSearchMixin"] = AuctionatorMultiSearchMixin
+-- /run _G["gAuctionatorMultiSearchMixin"].NextSearch(_G["gAuctionatorMultiSearchMixinSelf"] )
+

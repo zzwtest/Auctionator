@@ -104,6 +104,8 @@ function AuctionatorDirectSearchProviderMixin:GetSearchProvider()
   end
 end
 
+
+
 function AuctionatorDirectSearchProviderMixin:HasCompleteTermResults()
   Auctionator.Debug.Message("AuctionatorDirectSearchProviderMixin:HasCompleteTermResults()")
 

@@ -647,8 +647,9 @@ local AUCTION_DURATIONS = {
 function AuctionatorSaleItemMixin:GetDuration()
   return AUCTION_DURATIONS[self.Duration:GetValue()]
 end
-
+ 
 function AuctionatorSaleItemMixin:PostItem(confirmed)
+  --print("AuctionatorSaleItemMixin:PostItem(confirmed)")
   if not self:GetPostButtonState() then
     Auctionator.Debug.Message("Trying to post when we can't. Returning")
     return

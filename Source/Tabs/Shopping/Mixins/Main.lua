@@ -8,7 +8,8 @@ local EVENTBUS_EVENTS = {
   Auctionator.Shopping.Tab.Events.BuyScreenShown,
 }
 
-function AuctionatorShoppingTabFrameMixin:DoSearch(terms, options)
+function AuctionatorShoppingTabFrameMixin:DoSearch(terms, options) 
+  print("AuctionatorShoppingTabFrameMixin:DoSearch(terms, options) ")
   if #terms == 0 then
     return
   end
@@ -82,7 +83,7 @@ function AuctionatorShoppingTabFrameMixin:OnLoad()
   self.itemHistoryDialog:Init()
 
   self:SetupSearchProvider()
-
+  print("AuctionatorShoppingTabFrameMixin:OnLoad()",self)
   self:SetupListsContainer()
   self:SetupRecentsContainer()
   self:SetupTopSearch()
@@ -118,7 +119,10 @@ function AuctionatorShoppingTabFrameMixin:SetupSearchProvider()
 end
 
 function AuctionatorShoppingTabFrameMixin:SetupListsContainer()
-  self.ListsContainer:SetOnListExpanded(function()
+  print("AuctionatorShoppingTabFrameMixin:SetupListsContainer()",self) 
+  -- _G["AuctionatorShoppingTabFrameMixinSelf"] = self 
+  self.ListsContainer:SetOnListExpanded(function() 
+    print("self.ListsContainer:SetOnListExpanded")
     if Auctionator.Config.Get(Auctionator.Config.Options.AUTO_LIST_SEARCH) then
       self.singleSearch = false
       self:DoSearch(self.ListsContainer:GetExpandedList():GetAllItems())
@@ -129,7 +133,8 @@ function AuctionatorShoppingTabFrameMixin:SetupListsContainer()
     self:StopSearch()
     self.SearchOptions:OnListCollapsed()
   end)
-  self.ListsContainer:SetOnSearchTermClicked(function(list, searchTerm, index)
+  self.ListsContainer:SetOnSearchTermClicked(function(list, searchTerm, index) 
+    print("self.ListsContainer:SetOnSearchTermClicked")
     self.singleSearch = true
     self:DoSearch({searchTerm})
     self.SearchOptions:SetSearchTerm(searchTerm)
@@ -147,7 +152,8 @@ function AuctionatorShoppingTabFrameMixin:SetupListsContainer()
     self.itemDialog:Show()
     self.itemDialog:SetItemString(searchTerm)
   end)
-  self.ListsContainer:SetOnListSearch(function(list)
+  self.ListsContainer:SetOnListSearch(function(list) 
+    print("self.ListsContainer:SetOnListSearch")
     self.singleSearch = false
     self:DoSearch(list:GetAllItems())
   end)
@@ -174,8 +180,12 @@ function AuctionatorShoppingTabFrameMixin:SetupListsContainer()
   end)
 end
 
+-- _G["AuctionatorShoppingTabFrameMixin"] =  AuctionatorShoppingTabFrameMixin
+-- _G["AuctionatorShoppingTabFrameMixin"].SetupListsContainer(  _G["AuctionatorShoppingTabFrameMixinSelf"] )
+
 function AuctionatorShoppingTabFrameMixin:SetupRecentsContainer()
-  self.RecentsContainer:SetOnSearchRecent(function(searchTerm)
+  self.RecentsContainer:SetOnSearchRecent(function(searchTerm) 
+    print("RecentsContainer:SetOnSearchRecent")
     self.singleSearch = true
     self:DoSearch({searchTerm})
     self.SearchOptions:SetSearchTerm(searchTerm)
@@ -197,9 +207,12 @@ function AuctionatorShoppingTabFrameMixin:SetupRecentsContainer()
     end
   end)
 end
-
+-- https://wowpedia.fandom.com/wiki/Creating_key_bindings
+-- _G["gAAA"]:DoSearch({"白"})
 function AuctionatorShoppingTabFrameMixin:SetupTopSearch()
-  self.SearchOptions:SetOnSearch(function(searchTerm)
+  self.SearchOptions:SetOnSearch(function(searchTerm) 
+    print("SearchOptions:SetOnSearch",self,searchTerm) 
+    _G["gAAA"] = self 
     if self.searchRunning then
       self:StopSearch()
     elseif searchTerm == "" and self.ListsContainer:GetExpandedList() ~= nil then
@@ -213,7 +226,8 @@ function AuctionatorShoppingTabFrameMixin:SetupTopSearch()
   self.SearchOptions:SetOnMore(function(searchTerm)
     self:CloseAnyDialogs()
     self.itemDialog:Init(AUCTIONATOR_L_LIST_EXTENDED_SEARCH_HEADER, AUCTIONATOR_L_SEARCH)
-    self.itemDialog:SetOnFinishedClicked(function(searchTerm)
+    self.itemDialog:SetOnFinishedClicked(function(searchTerm) 
+      print("itemDialog:SetOnFinishedClicked")
       self.SearchOptions:SetSearchTerm(searchTerm)
       self.singleSearch = true
       self:DoSearch({searchTerm})

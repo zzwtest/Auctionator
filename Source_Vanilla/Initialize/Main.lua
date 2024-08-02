@@ -29,7 +29,7 @@ function AuctionatorInitializeVanillaMixin:CraftShown()
       if name == nil then
         return
       end
-
+      print('AuctionatorShoppingFrame:DoSearch({searchTerm}, {})')
       local searchTerm = "\"" .. name .. "\""
       AuctionatorShoppingFrame:DoSearch({searchTerm}, {})
       AuctionatorShoppingFrame.SearchOptions:SetSearchTerm(searchTerm)
@@ -43,3 +43,4 @@ function AuctionatorInitializeVanillaMixin:CraftShown()
 
   self.initializedCraftHooks = true
 end
+-- _G["gAuctionatorShoppingFrame"] = AuctionatorShoppingFrame

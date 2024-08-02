@@ -26,7 +26,13 @@ function AuctionatorShoppingTabClassicLoadAllButtonMixin:ReceiveEvent(eventName,
 end
 
 function AuctionatorShoppingTabClassicLoadAllButtonMixin:OnClick()
+  print("AuctionatorShoppingTabClassicLoadAllButtonMixin:OnClick()")
+  -- _G["AuctionatorShoppingTabClassicLoadAllButtonMixinSelf"] = self
   if self.lastTerms ~= nil then
     self:GetParent():DoSearch(self.lastTerms, { searchAllPages = true })
   end
 end
+
+-- _G["AuctionatorShoppingTabClassicLoadAllButtonMixin"] = AuctionatorShoppingTabClassicLoadAllButtonMixin
+
+-- _G["gAuctionatorMultiSearchMixin"].NextSearch(_G["gAuctionatorMultiSearchMixinSelf"] )
