@@ -16,6 +16,7 @@ local MONEY_EVENTS = {
 }
 
 function AuctionatorBuyDialogMixin:OnLoad()
+  _G["gAuctionatorBuyDialogMixinSelf"] = self
   self:RegisterForDrag("LeftButton")
   self.NumberPurchased:SetText(AUCTIONATOR_L_ALREADY_PURCHASED_X:format(15))
   self.PurchaseDetails:SetText(AUCTIONATOR_L_BUYING_X_FOR_X:format(BLUE_FONT_COLOR:WrapTextInColorCode("x20"), GetMoneyString(10998, true)))
@@ -171,6 +172,7 @@ function AuctionatorBuyDialogMixin:FindAuctionOnCurrentPage()
 
   local page = Auctionator.AH.GetCurrentPage()
   for index, auction in ipairs(page) do
+    --print(index,auction)
     if index > self.blacklistedBefore then
       local stackPrice = auction.info[Auctionator.Constants.AuctionItemInfo.Buyout]
       local stackSize = auction.info[Auctionator.Constants.AuctionItemInfo.Quantity]
@@ -200,6 +202,7 @@ function AuctionatorBuyDialogMixin:SetChainBuy()
 end
 
 function AuctionatorBuyDialogMixin:BuyStackClicked()
+  
   if self.auctionData.stackPrice > GetMoney() then
     self:UpdateButtons()
     return
@@ -208,6 +211,7 @@ function AuctionatorBuyDialogMixin:BuyStackClicked()
   self:SetChainBuy()
   self:FindAuctionOnCurrentPage()
   if self.buyInfo ~= nil then
+    -- print(self.buyInfo.index, self.auctionData.stackPrice)
     Auctionator.AH.PlaceAuctionBid(self.buyInfo.index, self.auctionData.stackPrice)
     self.auctionData.numStacks = self.auctionData.numStacks - 1
     Auctionator.Utilities.SetStacksText(self.auctionData)

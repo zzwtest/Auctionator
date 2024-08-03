@@ -208,11 +208,19 @@ function AuctionatorShoppingTabFrameMixin:SetupRecentsContainer()
   end)
 end
 -- https://wowpedia.fandom.com/wiki/Creating_key_bindings
--- _G["gAAA"]:DoSearch({"白"})
+-- _G["gAuctionatorShoppingSelf"]:DoSearch({"白"})
+
+-- local function myFunction()
+--   print("这个函数每10秒执行一次。")
+--   _G["gAuctionatorShoppingSelf"]:DoSearch({"金苜蓿"})
+-- end
+-- local myTicker = C_Timer.NewTicker(10, myFunction)
+
+
 function AuctionatorShoppingTabFrameMixin:SetupTopSearch()
   self.SearchOptions:SetOnSearch(function(searchTerm) 
-    print("SearchOptions:SetOnSearch",self,searchTerm) 
-    _G["gAAA"] = self 
+    --print("SearchOptions:SetOnSearch",self,searchTerm) 
+    _G["gAuctionatorShoppingSelf"] = self 
     if self.searchRunning then
       self:StopSearch()
     elseif searchTerm == "" and self.ListsContainer:GetExpandedList() ~= nil then

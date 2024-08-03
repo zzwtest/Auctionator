@@ -168,10 +168,10 @@ function AuctionatorDirectSearchProviderMixin:ProcessSearchResults(pageResults)
   Auctionator.Debug.Message("AuctionatorDirectSearchProviderMixin:ProcessSearchResults()")
   
   for _, entry in ipairs(pageResults) do
-
+    
     local itemID = entry.info[Auctionator.Constants.AuctionItemInfo.ItemID]
     local itemString = Auctionator.Search.GetCleanItemLink(entry.itemLink)
-
+    --print("Processing search result: " .. itemString)
     if self.resultsByKey[itemString] == nil then
       self.resultsByKey[itemString] = {}
     end

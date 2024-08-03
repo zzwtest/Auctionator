@@ -44,6 +44,7 @@ end
 function Auctionator.AH.DumpAuctions(view)
   local auctions = {}
   for index = 1, GetNumAuctionItems(view) do
+    
     local auctionInfo = { GetAuctionItemInfo(view, index) }
     local itemLink = GetAuctionItemLink(view, index)
     local timeLeft = GetAuctionItemTimeLeft(view, index)
@@ -53,6 +54,14 @@ function Auctionator.AH.DumpAuctions(view)
       timeLeft = timeLeft - 1, --Offset to match Retail time parameters
       index = index,
     }
+
+    ----- 统计当前情况 
+    -- print("Auctionator.AH.DumpAuctions(view",index,auctionInfo,itemLink,timeLeft) 
+    local stackPrice = auctionInfo[Auctionator.Constants.AuctionItemInfo.Buyout]
+    local count = auctionInfo[Auctionator.Constants.AuctionItemInfo.Quantity]
+    -- print(itemLink,stackPrice,count,stackPrice/count/10000)
+
+    -----
     table.insert(auctions, entry)
   end
   return auctions

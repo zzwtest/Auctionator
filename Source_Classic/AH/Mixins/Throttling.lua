@@ -172,6 +172,7 @@ function AuctionatorAHThrottlingFrameMixin:ComparePages()
   end
 
   for index, auction in ipairs(self.currentPage) do
+    print(index, newPage[index].itemLink, auction.itemLink)
     local stackPrice = auction.info[Auctionator.Constants.AuctionItemInfo.Buyout]
     local stackSize = auction.info[Auctionator.Constants.AuctionItemInfo.Quantity]
     local minBid = auction.info[Auctionator.Constants.AuctionItemInfo.MinBid]
