@@ -61,8 +61,8 @@ function ThreeDimensionsCode:createSignalFrames()
 
     local function createSignalFrame(name, pos)
         local frame = CreateFrame("frame", name, nil)
-        frame:SetWidth(2)
-        frame:SetHeight(2)
+        frame:SetWidth(20)
+        frame:SetHeight(20)
         frame:SetPoint(pos, 0, 0)
         frame.texture = frame:CreateTexture(nil, "BACKGROUND")
         return frame
@@ -106,6 +106,25 @@ function ThreeDimensionsCode:createSignalFrames()
         end,
     }
 end
+
+function ThreeDimensionsCode:HideSignal()
+    local signalLamp = self.signalLamp
+    if signalLamp then
+        signalLamp.hide()
+    end
+end
+
+
+function ThreeDimensionsCode:Signal_001()
+    local s001 = { 1/255, 1 / 255, 1 / 255, 1 }
+    self.frmSignalLampA.texture:SetColorTexture(unpack(s001))
+    self.frmSignalLampA.texture:SetAllPoints(self.frmSignalLampA)
+    self.frmSignalLampB.texture:SetColorTexture(unpack(s001))
+    self.frmSignalLampB.texture:SetAllPoints(self.frmSignalLampB)
+    self.signalLamp:show()
+end
+
+
 
 function ThreeDimensionsCode:keepAlive()
     -- implement keepAlive logic here
@@ -197,7 +216,7 @@ function ThreeDimensionsCode:PixelPrototype()
         else
             p = ps[ns.ThreeDimensionsCode.padWriteIndex + 1]
         end
-
+        print(self[1],self[2],self[3])
         p.texture:SetColorTexture(self:color(1), self:color(2), self:color(3), 1)
         p.texture:SetAllPoints(p)
 
@@ -277,8 +296,8 @@ function ThreeDimensionsCode:initialize()
     frame:SetScript("OnKeyDown", function(self, event, ...)
         if IsAltKeyDown() and (event == "PAGEUP" or event == "PAGEDOWN") then
             if event == "PAGEDOWN" then
-                print("alt+pagedown") 
-                --PlaceAuctionBid("list", 2, 14729)
+                ns.ThreeDimensionsCode:HideSignal()
+                PlaceAuctionBid("list", 1, 78000)
             end
         end
     end)

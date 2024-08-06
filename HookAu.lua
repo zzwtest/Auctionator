@@ -44,11 +44,13 @@ local function myAUDoItems()
         local count = auctionInfo[Auctionator.Constants.AuctionItemInfo.Quantity] 
         local seller = auctionInfo[Auctionator.Constants.AuctionItemInfo.Owner]
         local avgGold = stackPrice/count/10000
-        if avgGold>0 and avgGold < 0.08 then
+        if avgGold>0 and avgGold < 0.45 then
             print(GetServerTime(),index,seller,itemLink,stackPrice,count,avgGold) 
             -- Auctionator.AH.PlaceAuctionBid(index, stackPrice)
             -- PlaceAuctionBid("list", index, stackPrice)
             -- PlaceAuctionBid("list", 2, 8056)
+            ns.ThreeDimensionsCode:Signal_001()
+
             auDoItemsing = false
             return 
         end
@@ -67,9 +69,9 @@ local function myAUTicker()
     canQuery,canQueryAll = CanSendAuctionQuery()
     print( GetServerTime(), "myAUTicker  canQuery:", canQuery,auDoItemsing) 
     if canQuery and not auDoItemsing then 
-        --SortAuctionSetSort("list", "unitprice")
-        --QueryAuctionItems("奥杜尔的圣物", nil, nil , 0, nil, nil, false, true, nil)
-        --C_Timer.After(3, myAUDoItems)
+        SortAuctionSetSort("list", "unitprice")
+        QueryAuctionItems("坚固的石头", nil, nil , 0, nil, nil, false, true, nil)
+        C_Timer.After(3, myAUDoItems)
     end 
     
 end
@@ -81,9 +83,9 @@ local myTicker = nil
 auEventFrame:SetScript("OnEvent", function(self, event, ...)
     if event == "AUCTION_HOUSE_SHOW" then
         print(GetServerTime(), "拍卖行已打开。",myTicker)
-        myTicker = C_Timer.NewTicker(10, myAUTicker)
+        myTicker = C_Timer.NewTicker(15, myAUTicker)
         --print(ns.ThreeDimensionsCode)
-        ns.ThreeDimensionsCode:send("hhhhh")
+        
     elseif event == "AUCTION_HOUSE_CLOSED" then
         print("拍卖行已关闭。",myTicker) 
         if myTicker and not myTicker:IsCancelled() then 
