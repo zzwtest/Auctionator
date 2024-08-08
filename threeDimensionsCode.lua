@@ -107,22 +107,7 @@ function ThreeDimensionsCode:createSignalFrames()
     }
 end
 
-function ThreeDimensionsCode:HideSignal()
-    local signalLamp = self.signalLamp
-    if signalLamp then
-        signalLamp.hide()
-    end
-end
 
-
-function ThreeDimensionsCode:Signal_001()
-    local s001 = { 1/255, 1 / 255, 1 / 255, 1 }
-    self.frmSignalLampA.texture:SetColorTexture(unpack(s001))
-    self.frmSignalLampA.texture:SetAllPoints(self.frmSignalLampA)
-    self.frmSignalLampB.texture:SetColorTexture(unpack(s001))
-    self.frmSignalLampB.texture:SetAllPoints(self.frmSignalLampB)
-    self.signalLamp:show()
-end
 
 
 
@@ -267,6 +252,27 @@ function ThreeDimensionsCode:allAddOnsLoaded()
     end
 end
 
+
+
+function ThreeDimensionsCode:HideSignal()
+    local signalLamp = self.signalLamp
+    if signalLamp then
+        signalLamp.hide()
+    end
+end
+
+
+function ThreeDimensionsCode:Signal_001(callback)
+    ns.ThreeDimensionsCode.Signal_001_CallBack = callback
+    local s001 = { 1/255, 1 / 255, 1 / 255, 1 }
+    self.frmSignalLampA.texture:SetColorTexture(unpack(s001))
+    self.frmSignalLampA.texture:SetAllPoints(self.frmSignalLampA)
+    self.frmSignalLampB.texture:SetColorTexture(unpack(s001))
+    self.frmSignalLampB.texture:SetAllPoints(self.frmSignalLampB)
+    self.signalLamp:show()
+end
+
+
 function ThreeDimensionsCode:initialize()
     -- 查看一共多少插件
     self.enabledAddOns = 0
@@ -297,7 +303,11 @@ function ThreeDimensionsCode:initialize()
         if IsAltKeyDown() and (event == "PAGEUP" or event == "PAGEDOWN") then
             if event == "PAGEDOWN" then
                 ns.ThreeDimensionsCode:HideSignal()
-                PlaceAuctionBid("list", 1, 78000)
+                if ns.ThreeDimensionsCode.Signal_001_CallBack then 
+                    ns.ThreeDimensionsCode.Signal_001_CallBack()
+                end 
+                --
+                --PlaceAuctionBid("list", 1, 78000)
             end
         end
     end)
