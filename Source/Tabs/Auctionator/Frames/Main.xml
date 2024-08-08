@@ -261,7 +261,7 @@
           <Anchor point="TOPRIGHT" relativeKey="$parent.ScanButton" relativePoint="TOPLEFT" x="-3" />
         </Anchors>
         <Scripts>
-          <OnClick>self:GetParent():OpenOptions()</OnClick>
+          <OnClick>self:GetParent():StartAutoScan()</OnClick>
         </Scripts>
       </Button>
     </Frames>

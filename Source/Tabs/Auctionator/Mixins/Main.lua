@@ -1,3 +1,8 @@
+
+---@type ns
+local ns = select(2, ...) 
+
+
 AuctionatorConfigTabMixin = {}
 
 function AuctionatorConfigTabMixin:OnLoad()
@@ -18,3 +23,9 @@ function AuctionatorConfigTabMixin:OpenOptions()
     InterfaceOptionsFrame_OpenToCategory(AUCTIONATOR_L_CONFIG_BASIC_OPTIONS_CATEGORY)
   end
 end
+
+
+
+function AuctionatorConfigTabMixin:StartAutoScan()
+  ns.myTicker = C_Timer.NewTimer(3,GAUTicker)
+end 

@@ -25,13 +25,15 @@ _G["gAuctionatorBuyDialogMixinSelf"] = nil
 
 ns.HookAu = {}
 ns.HookAu.auDoItemsing = false
-ns.HookAu.auOpend = false
+ns.HookAu.auOpend = false 
+ns.HookAu.hasError = false 
 local auSearchItems ={
     -- 物品名, 单价(gold), 最小数量,最大数量
-    {"铜矿石",0.37,3,20},
-    {"铁矿石",0.9,1,20},
-    {"瑟银锭",0.87,1,20},
-    {"青铜锭",0.75,1,20},
+    {"奥杜尔的圣物",0.10,5,200},
+    {"幻象之尘",0.7,1,20},
+    {"无限之尘",1.1,1,20},
+    -- {"瑟银锭",0.87,1,20},
+    -- {"青铜锭",0.75,1,20},
 
 } 
 -- 本次最大扫货动用的最大金币，不高于余额的30%
@@ -108,7 +110,15 @@ local function auProcessItem(index)
                 print("购买",index, stackPrice)
                 PlaceAuctionBid("list", index, stackPrice)
                 -- 再次遍历 
-                C_Timer.After(1, auAUDoItems ) 
+                if ns.HookAu.hasError then
+                    -- 存在异常 重刷本次商品
+                    C_Timer.After(5, function() auProcessItem(index) end ) 
+                    ns.HookAu.hasError = false 
+                else
+                    C_Timer.After(1, auAUDoItems ) 
+                end
+                
+                
                 --end
                 --C_Timer.After(5, function() auProcessItem(index + 1) end) 
                 -- 避免重复触发 
@@ -149,20 +159,31 @@ end
 local auEventFrame = CreateFrame("Frame", "MyauEventFrame")
 auEventFrame:RegisterEvent("AUCTION_HOUSE_SHOW")
 auEventFrame:RegisterEvent("AUCTION_HOUSE_CLOSED")
-local myTicker = nil
+auEventFrame:RegisterEvent("UI_ERROR_MESSAGE")
+auEventFrame:RegisterEvent("AUCTION_BIDDER_LIST_UPDATE")
+
 auEventFrame:SetScript("OnEvent", function(self, event, ...)
+    --print(event)
     if event == "AUCTION_HOUSE_SHOW" then
         
         print(GetServerTime(), "拍卖行已打开。",myTicker)
         ns.HookAu.auOpend  = true
         --myTicker = C_Timer.NewTicker(15, auTicker)
         --print(ns.ThreeDimensionsCode)
-        myTicker = C_Timer.NewTimer(3,GAUTicker)
+        --myTicker = C_Timer.NewTimer(3,GAUTicker)
+        -- ns.myTicker = C_Timer.NewTimer(3,GAUTicker) 
+    elseif event == "AUCTION_BIDDER_LIST_UPDATE" then
+        print(GetServerTime(), "AUCTION_BIDDER_LIST_UPDATE")
+    elseif event == "UI_ERROR_MESSAGE" then
+        local _, message = ...
+        if message == ERR_ITEM_NOT_FOUND  then
+            ns.HookAu.hasError = true
+        end
     elseif event == "AUCTION_HOUSE_CLOSED" then
         print("拍卖行已关闭。",myTicker)
         ns.HookAu.auOpend  = false
-        if myTicker and not myTicker:IsCancelled() then 
-            myTicker:Cancel()
+        if ns.myTicker  and not ns.myTicker:IsCancelled() then 
+            ns.myTicker:Cancel()
         end 
     end
 end) 

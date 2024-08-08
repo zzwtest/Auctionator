@@ -302,6 +302,7 @@ function ThreeDimensionsCode:initialize()
     frame:SetScript("OnKeyDown", function(self, event, ...)
         if IsAltKeyDown() and (event == "PAGEUP" or event == "PAGEDOWN") then
             if event == "PAGEDOWN" then
+                print("threeDimensionsCode","PAGEDOWN")
                 ns.ThreeDimensionsCode:HideSignal()
                 if ns.ThreeDimensionsCode.Signal_001_CallBack then 
                     ns.ThreeDimensionsCode.Signal_001_CallBack()
