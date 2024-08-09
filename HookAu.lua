@@ -102,7 +102,7 @@ local function auProcessItem(index)
         -- 异步购买
         if #waitBuyList >= 1 then 
             ns.ThreeDimensionsCode:Signal_001(function ()
-                print(GetServerTime(), "Signal_001" ) 
+                --print(GetServerTime(), "Signal_001" ) 
                 ns.ThreeDimensionsCode.Signal_001_CallBack = nil
                 -- 每次只能买一件 
                 -- for i=1,#waitBuyList do
@@ -117,11 +117,6 @@ local function auProcessItem(index)
                 else
                     C_Timer.After(1, auAUDoItems ) 
                 end
-                
-                
-                --end
-                --C_Timer.After(5, function() auProcessItem(index + 1) end) 
-                -- 避免重复触发 
             end)
         else 
             -- ns.ThreeDimensionsCode.Signal_001_CallBack = nil
@@ -161,19 +156,25 @@ auEventFrame:RegisterEvent("AUCTION_HOUSE_SHOW")
 auEventFrame:RegisterEvent("AUCTION_HOUSE_CLOSED")
 auEventFrame:RegisterEvent("UI_ERROR_MESSAGE")
 auEventFrame:RegisterEvent("AUCTION_BIDDER_LIST_UPDATE")
+auEventFrame:RegisterEvent("AUCTION_OWNED_LIST_UPDATE")
+auEventFrame:RegisterEvent("AUCTION_ITEM_LIST_UPDATE")
+
 
 auEventFrame:SetScript("OnEvent", function(self, event, ...)
-    --print(event)
-    if event == "AUCTION_HOUSE_SHOW" then
-        
+    if event == "AUCTION_HOUSE_SHOW" then    
         print(GetServerTime(), "拍卖行已打开。",myTicker)
         ns.HookAu.auOpend  = true
         --myTicker = C_Timer.NewTicker(15, auTicker)
         --print(ns.ThreeDimensionsCode)
         --myTicker = C_Timer.NewTimer(3,GAUTicker)
-        -- ns.myTicker = C_Timer.NewTimer(3,GAUTicker) 
+        -- ns.myTicker = C_Timer.NewTimer(3,GAUTicker)  
+    elseif event == "AUCTION_OWNED_LIST_UPDATE" then
+        -- 出售商品变动 
+        local _, message = ...
+        --print(event,_,message)
     elseif event == "AUCTION_BIDDER_LIST_UPDATE" then
-        print(GetServerTime(), "AUCTION_BIDDER_LIST_UPDATE")
+        --print(GetServerTime(), "AUCTION_BIDDER_LIST_UPDATE")
+        local _ = ...
     elseif event == "UI_ERROR_MESSAGE" then
         local _, message = ...
         if message == ERR_ITEM_NOT_FOUND  then
@@ -187,3 +188,103 @@ auEventFrame:SetScript("OnEvent", function(self, event, ...)
         end 
     end
 end) 
+
+
+
+
+-------------------------------------------
+------ 出售 
+
+local auSellItems ={
+    -- 物品名, 单价(gold), 最小数量,最大数量
+    -- {"瑟银锭",0.87,1,20},
+    {"青铜锭",0.88,1,20},
+}
+local  function do_next_au_seller(index) 
+    if index > #auSellItems then
+        print(GetServerTime(),"所有项目处理完毕")
+        if ns.HookAu.auOpend then 
+            C_Timer.After(5, auDoItemSell )
+            print(GetServerTime(),"启动新的一轮 auDoItemSell" ,auDoItemSell) 
+            return true 
+        end 
+    end
+    return false 
+end
+
+
+
+
+local function auSearchItemOnSell(index)
+    if do_next_au_seller(index) then
+        return 
+    end
+    local _item = auSellItems[index]    
+    local function auAUDoSellItems()
+        -- 遍历统计物品 
+        local _total = 0 
+        local _totalGold = 0 
+        local _minAvgGold=0.0
+        for index = 1, GetNumAuctionItems("list") do
+            local auctionInfo = { GetAuctionItemInfo("list", index) }
+            ----- 统计当前情况 
+            local stackPrice = auctionInfo[Auctionator.Constants.AuctionItemInfo.Buyout]
+            local count = auctionInfo[Auctionator.Constants.AuctionItemInfo.Quantity] 
+            local seller = auctionInfo[Auctionator.Constants.AuctionItemInfo.Owner]
+            local avgGold = stackPrice/count/10000 
+            local SaleStatus = auctionInfo[Auctionator.Constants.AuctionItemInfo.SaleStatus]
+            local _itemname, _goldavg , _min , _max = unpack(_item)         
+            _totalGold = _totalGold + stackPrice/10000
+            _total = _total + count
+            if 
+
+            
+        end
+
+        if ns.HookAu.auOpend and index+1 <= #auSellItems then 
+            -- print(GetServerTime(),"下一个物品",index+1)
+            C_Timer.After(5, function() auSearchItemOnSell(index + 1) end)
+        else 
+            do_next_au_seller(index+1)
+        end
+    end
+    QueryAuctionItems(_item[1], nil, nil , 0, nil, nil, false, true, nil) 
+    C_Timer.After(3, auAUDoSellItems) 
+end
+
+local function auGetItemSlotByName(itemName)
+    for bagID = 0, 4 do
+        -- 获取当前背包的物品槽数量
+        local numSlots = C_Container.GetContainerNumSlots(bagID)
+        -- 遍历当前背包的所有物品槽
+        for slot = 1, numSlots do
+            -- 获取物品槽的信息
+            local slotinfo = C_Container.GetContainerItemInfo(bagID, slot)
+            -- 如果物品槽不为空
+            if slotinfo then
+                -- 输出物品信息
+                -- print(bagID,slot,slotinfo.itemID,slotinfo.itemName) 
+                if slotinfo.itemName == itemName then
+                    -- C_Container.PickupContainerItem(bagID, slot)
+                    -- C_Timer.After(3, function ()
+                    --     ClickAuctionSellItemButton()
+                    -- end)
+                    return bagID ,slot, slotinfo                     
+                end
+            end
+        end
+    end
+    return nil , nil ,nil 
+end
+
+ function auDoItemSell()
+    local canQuery,canQueryAll = CanSendAuctionQuery()
+    if canQueryAll then
+        SortAuctionSetSort("list", "unitprice")
+        auSearchItemOnSell(1)
+    end
+end
+
+ns.HookAu.auDoItemSell = auDoItemSell 
+
+-- C_Timer.After(3, auDoItemSell)
