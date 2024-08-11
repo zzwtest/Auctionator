@@ -10,9 +10,10 @@ ns.HookAu.auDoItemsing = false
 ns.HookAu.auOpend = false
 ns.HookAu.hasError = false
 
-
-
-local auSearchItems ={
+local factionGroup = UnitFactionGroup("player")
+print(factionGroup,factionGroup == "Alliance")
+-- 部落搜索
+local auHordeSearchItems ={
     -- 物品名, 单价(gold), 最小数量,最大数量
 
    {"永恒之水",1.45,1,20},
@@ -21,34 +22,53 @@ local auSearchItems ={
     {"奥杜尔的圣物",0.075,1,200},
 
 }
+-- 联盟搜索
+local auAllianceSearchItems ={
+    -- 物品名, 单价(gold), 最小数量,最大数量
+    {"青铜锭",0.68,1,20},
+    {"铜矿石",0.34,1,20},
+    {"锡矿石",0.8,1,20},
+    {"铜锭",0.34,1,20},
+    {"沉重的石头",0.60,1,20},
+    {"萨隆邪铁矿石",0.8,1,20},
+    {"北地皮",0.35,1,20},
+    {"精金矿石",0.45,1,20},
 
--- 联盟
--- local auSearchItems ={
---     -- 物品名, 单价(gold), 最小数量,最大数量
---     {"青铜锭",0.68,1,20},
---     {"铜矿石",0.34,1,20},
---     {"锡矿石",0.7,1,20},
---     {"铜锭",0.34,1,20},
---     {"沉重的石头",0.60,1,20},
---     {"萨隆邪铁矿石",0.8,1,20},
---     {"北地皮",0.35,1,20},
+    
 
--- }
+}
+if factionGroup == "Horde" then
+    ns.HookAu.auSearchItems = auHordeSearchItems
+else 
+    ns.HookAu.auSearchItems = auAllianceSearchItems
+end
 
-local auSellItems ={
+-- 联盟 出售
+local auSellItemsHorde ={
+    -- 物品名, 单价(gold), 最大单价 ,单组最大数量，首页我占有最小数量 
+    {"奥杜尔的圣物",0.17 , 0.48  , 40,3},
+
+}
+
+-- 部落 出售
+local auSellItemsAlliance ={
     -- 物品名, 单价(gold), 最大单价 ,单组最大数量，首页我占有最小数量 
     --  {"奥法之尘",1.31,   5  ,  10, 3},
     -- {"青铜锭",0.88, 5,20  , 30},
     -- {"青铜锭",0.88, 5,20  , 30},
     {"铜锭",0.54, 5,10  , 3},
-    {"沉重的石头",1.24, 5,10  , 3},
+    -- {"沉重的石头",1.24, 5,10  , 3},
  
     -- {"奥杜尔的圣物",0.25 , 0.48  , 40,3},
 
 }
 
+if factionGroup == "Horde" then
+    ns.HookAu.auSellItems = auSellItemsAlliance
+else 
+    ns.HookAu.auSellItems = auSellItemsHorde
+end
 
-ns.HookAu.auSearchItems = auSearchItems
 
 
 local auSearchJLItems ={}
@@ -112,7 +132,6 @@ ns.HookAu.auSearchJLItems = auSearchJLItems
 
 
 
-ns.HookAu.auSellItems = auSellItems
 
 
 
