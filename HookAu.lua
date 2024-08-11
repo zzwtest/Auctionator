@@ -1,6 +1,6 @@
 
 ---@type ns
-local ns = select(2, ...) 
+local ns = select(2, ...)
 
 
 
@@ -23,21 +23,12 @@ _G["gAuctionatorBuyDialogMixinSelf"] = nil
 
 -- Auctionator.AH.PlaceAuctionBid(self.buyInfo.index, self.auctionData.stackPrice) 
 
-ns.HookAu = {}
-ns.HookAu.auDoItemsing = false
-ns.HookAu.auOpend = false 
-ns.HookAu.hasError = false 
-local auSearchItems ={
-    -- 物品名, 单价(gold), 最小数量,最大数量
-    {"奥杜尔的圣物",0.10,5,200},
-    {"幻象之尘",0.7,1,20},
-    {"无限之尘",1.1,1,20},
-    -- {"瑟银锭",0.87,1,20},
-    -- {"青铜锭",0.75,1,20},
+local auSearchItems = ns.HookAu.auSearchItems
+local auJLLoopCount = 0 
+local jlEventFrame = nil 
 
-} 
 -- 本次最大扫货动用的最大金币，不高于余额的30%
-ns.HookAu.maxGoldP = 0.3 
+ns.HookAu.maxGoldP = 0.3
 ns.HookAu.startGold = GetMoney()/10000
 local function checkGold()
     if (ns.HookAu.startGold - GetMoney()/10000)/ns.HookAu.startGold > ns.HookAu.maxGoldP then
@@ -47,109 +38,291 @@ local function checkGold()
 end
 
 -- SetBindingMacro("CTRL-X", "MyAddonMacro")
-local  function do_next_au_auticker (index) 
+local  function do_next_au_auticker (index)
     if index > #auSearchItems then
-        print(GetServerTime(),"所有项目处理完毕")
-        if ns.HookAu.auOpend then 
-            C_Timer.After(5, GAUTicker )
-            print(GetServerTime(),"启动新的一轮 auTicker" ,GAUTicker) 
-            return true 
-        end 
+        --print(GetServerTime(),"所有项目处理完毕")
+        --ns.HookAu.LogInfo("处理",_currentIndex,_currentItem[1])
+        if ns.HookAu.auOpend then
+            C_Timer.After(3, StartAUScan )
+            --print(GetServerTime(),"启动新的一轮 auTicker" ,StartAUScan)
+            return true
+        end
     end
-    return false 
+    return false
 end
 
-    
 
+ 
+-- /console scriptErrors 1 
+local function GAUTicker()
+    if not jlEventFrame then 
+        jlEventFrame = CreateFrame("Frame", "MyaujlEventFrame")
+        jlEventFrame:RegisterEvent("UI_ERROR_MESSAGE")
+        jlEventFrame:RegisterEvent("PLAYER_MONEY")
+        jlEventFrame:RegisterEvent("CHAT_MSG_SYSTEM")
+        jlEventFrame:RegisterEvent("AUCTION_BIDDER_LIST_UPDATE")
+    end 
 
-local function auProcessItem(index)
-    if do_next_au_auticker(index) then
+    if not ns.HookAu.auOpend then
+        return
+    end
+    if ns.HookAu.auDoItemsing then
+        ns.HookAu.LogError("物品处理中。。")
+        C_Timer.After(1.5, GAUTickerJIANLOU)
         return 
     end
-    local _item = auSearchItems[index]
-    local function auAUDoItems()
+    if not checkGold() then
+        ns.HookAu.LogError("金币达到上限 终止扫货 ")
+        return
+    end
+    local _doScan = nil 
+    local _doBuy = nil 
+    local auAUDoItems = nil 
+    local waitBuyList = {}
+
+    local auProcessItemFunc = nil 
+    local _currentIndex = 0;
+
+    _doBuy = function ()
         ns.HookAu.auDoItemsing = true 
-        local waitBuyList = {}
+        if #waitBuyList == 0 then 
+            ns.HookAu.auDoItemsing = false
+            ns.HookAu.LogError("_doBuy call auProcessItemFunc " ,_currentIndex)
+            C_Timer.After(0.5, function() auProcessItemFunc(_currentIndex)   end )
+            return
+        end
+        local _buyitem = table.remove(waitBuyList,1)
+        ns.HookAu.LogWarn("购买-_doBuy",#waitBuyList,_buyitem)
+        ns.ThreeDimensionsCode:Signal_001(function ()
+            --print(GetServerTime(), "Signal_001" ) 
+            ns.ThreeDimensionsCode.Signal_001_CallBack = nil
+            -- 每次只能买一件 
+            index,seller,itemLink,stackPrice,count,avgGold = unpack(_buyitem)
+            ns.HookAu.LogWarn("购买",index,seller,itemLink,stackPrice,count)
+            PlaceAuctionBid("list", index, stackPrice)
+            -- 再次遍历
+            -- C_Timer.After(0.3, _doJL )
+        end)
+    end
+
+
+    auAUDoItems = function ()
+        local _currentItem = auSearchItems[_currentIndex];
+        local _itemname, _goldavg , _min , _max = unpack(_currentItem)
+        ns.HookAu.auDoItemsing = true
+        waitBuyList = {}
         for index = 1, GetNumAuctionItems("list") do
             local auctionInfo = { GetAuctionItemInfo("list", index) }
             local itemLink = GetAuctionItemLink("list", index)
-            local timeLeft = GetAuctionItemTimeLeft("list", index)
-            local entry = {
-                info = auctionInfo,
-                itemLink = itemLink,
-                timeLeft = timeLeft - 1, --Offset to match Retail time parameters
-                index = index,
-            }
-    
             ----- 统计当前情况 
-            -- print("Auctionator.AH.DumpAuctions(view",index,auctionInfo,itemLink,timeLeft) 
             local stackPrice = auctionInfo[Auctionator.Constants.AuctionItemInfo.Buyout]
-            local count = auctionInfo[Auctionator.Constants.AuctionItemInfo.Quantity] 
+            local count = auctionInfo[Auctionator.Constants.AuctionItemInfo.Quantity]
             local seller = auctionInfo[Auctionator.Constants.AuctionItemInfo.Owner]
-            local avgGold = stackPrice/count/10000 
+            if not seller then 
+                seller = "-"
+            end 
+            local avgGold = stackPrice/count/10000
             local SaleStatus = auctionInfo[Auctionator.Constants.AuctionItemInfo.SaleStatus]
-            local _itemname, _goldavg , _min , _max = unpack(_item)
+            
             if avgGold>0 and avgGold <= _goldavg and count >= _min and count <= _max and  SaleStatus == 0 then
-                print(GetServerTime(),index,seller,itemLink,stackPrice,count,avgGold) 
-                -- Auctionator.AH.PlaceAuctionBid(index, stackPrice)
-                -- PlaceAuctionBid("list", index, stackPrice)
-                -- PlaceAuctionBid("list", 2, 8056)
-                --ns.ThreeDimensionsCode:Signal_001()
+                ns.HookAu.LogWarn("购买-预备",index,seller,itemLink,stackPrice,avgGold)
                 table.insert(waitBuyList,{index,seller,itemLink,stackPrice,count,avgGold})
             end
-            --print(GetServerTime(),itemLink,stackPrice,count,)
         end
         -- 异步购买
-        if #waitBuyList >= 1 then 
-            ns.ThreeDimensionsCode:Signal_001(function ()
-                --print(GetServerTime(), "Signal_001" ) 
-                ns.ThreeDimensionsCode.Signal_001_CallBack = nil
-                -- 每次只能买一件 
-                -- for i=1,#waitBuyList do
-                index,seller,itemLink,stackPrice,count,avgGold = unpack(waitBuyList[1])
-                print("购买",index, stackPrice)
-                PlaceAuctionBid("list", index, stackPrice)
-                -- 再次遍历 
-                if ns.HookAu.hasError then
-                    -- 存在异常 重刷本次商品
-                    C_Timer.After(5, function() auProcessItem(index) end ) 
-                    ns.HookAu.hasError = false 
-                else
-                    C_Timer.After(1, auAUDoItems ) 
-                end
-            end)
-        else 
-            -- ns.ThreeDimensionsCode.Signal_001_CallBack = nil
-            if ns.HookAu.auOpend and index+1 <= #auSearchItems then 
-                print(GetServerTime(),"下一个物品",index+1)
-                C_Timer.After(5, function() auProcessItem(index + 1) end)
-            else 
-                do_next_au_auticker(index+1)   
+        if #waitBuyList >= 1 then
+            _doBuy()
+        else
+            if ns.HookAu.auOpend and _currentIndex+1 <= #auSearchItems then
+                --print(GetServerTime(),"下一个物品",_currentIndex+1)
+                C_Timer.After(5, function() auProcessItemFunc(_currentIndex + 1) end)
+            else
+                do_next_au_auticker(_currentIndex+1)
             end
         end
         ns.HookAu.auDoItemsing = false
     end
-    -- 在这里处理每个项目
-    print(GetServerTime(),"处理项目: ", _item[1])
-    QueryAuctionItems(_item[1], nil, nil , 0, nil, nil, false, true, nil)
-    C_Timer.After(3, auAUDoItems)
-    -- 设置下一个项目的处理，延迟3秒
+
+    
+    auProcessItemFunc =  function (index)
+        if not ns.HookAu.auOpend then
+            return
+        end
+        _currentIndex = index 
+        if do_next_au_auticker(_currentIndex) then
+            return
+        end
+        local _currentItem = auSearchItems[_currentIndex]
+        -- 在这里处理每个项目
+        ns.HookAu.LogInfo("处理",_currentIndex,_currentItem[1])
+        QueryAuctionItems(_currentItem[1], nil, nil , 0, nil, nil, false, true, nil)
+        --QueryAuctionItems( nil , nil, nil , 0, nil, nil, false, true, AuctionCategories[6].filters)
+        C_Timer.After(3, auAUDoItems)
+        -- 设置下一个项目的处理，延迟3秒
+    end
+
+
+
+    jlEventFrame:SetScript("OnEvent", function(self, eventName, ...)
+        ns.HookAu.LogInfo(eventName)
+        --if eventName == "AUCTION_BIDDER_LIST_UPDATE" then
+        if eventName == "PLAYER_MONEY" then 
+            C_Timer.After(0.5, auAUDoItems)
+        elseif eventName == "UI_ERROR_MESSAGE" then
+            local _, message = ...
+            ns.HookAu.LogInfo(eventName,message)
+            if message == "未找到指定物品"  then
+                C_Timer.After(0.5, _doBuy)
+            end
+        elseif eventName == "CHAT_MSG_SYSTEM" then
+            local message = ...
+            ns.HookAu.LogWarn(message,message == ERR_AUCTION_MIN_BID)
+            if message == ERR_AUCTION_MIN_BID then
+                C_Timer.After(0.5, auAUDoItems)
+            end
+        end
+    end)
+    canQuery,canQueryAll = CanSendAuctionQuery()
+    -- print( GetServerTime(), "auTicker  canQuery:", canQuery,ns.HookAu.auDoItemsing,"auOpend",ns.HookAu.auOpend)
+    if canQuery and not ns.HookAu.auDoItemsing and ns.HookAu.auOpend then
+        SortAuctionSetSort("list", "unitprice")
+        auProcessItemFunc(1)
+    end
+
+end
+-- 全局函数
+
+function StartAUScan()
+    GAUTicker()
 end
 
--- 全局函数
-function GAUTicker()
-    if not checkGold() then
-        print(GetServerTime(),"金币达到上限 终止扫货 ")
+
+--- 捡漏啊 
+--- 
+--- 
+local auSearchJLItems = ns.HookAu.auSearchJLItems
+
+
+
+function GAUTickerJIANLOU()
+    if not jlEventFrame then 
+        jlEventFrame = CreateFrame("Frame", "MyaujlEventFrame")
+        jlEventFrame:RegisterEvent("UI_ERROR_MESSAGE")
+        jlEventFrame:RegisterEvent("PLAYER_MONEY")
+        jlEventFrame:RegisterEvent("CHAT_MSG_SYSTEM")
+        jlEventFrame:RegisterEvent("AUCTION_BIDDER_LIST_UPDATE")
+
+    end 
+    auJLLoopCount = auJLLoopCount + 1
+    if not ns.HookAu.auOpend then
+        return
+    end
+    if ns.HookAu.auDoItemsing then
+        ns.HookAu.LogError("物品处理中。。")
+        C_Timer.After(1.5, GAUTickerJIANLOU)
         return 
     end
+    if not checkGold() then
+        ns.HookAu.LogError("金币达到上限 终止扫货 ")
+        return
+    end
+    local _doJL = nil 
+    local _doBuy = nil 
+
     canQuery,canQueryAll = CanSendAuctionQuery()
-    print( GetServerTime(), "auTicker  canQuery:", canQuery,ns.HookAu.auDoItemsing,"auOpend",ns.HookAu.auOpend) 
-    if canQuery and not ns.HookAu.auDoItemsing and ns.HookAu.auOpend then 
+    -- print( GetServerTime(), "auTicker  canQuery:", canQuery,ns.HookAu.auDoItemsing,"auOpend",ns.HookAu.auOpend)  
+    local waitBuyList = {}
+    _doBuy = function ()
+        ns.HookAu.auDoItemsing = true 
+        if #waitBuyList == 0 then 
+            ns.HookAu.auDoItemsing = false
+            return
+        end
+        local _buyitem = table.remove(waitBuyList,#waitBuyList)
+        ns.ThreeDimensionsCode:Signal_001(function ()
+            --print(GetServerTime(), "Signal_001" ) 
+            ns.ThreeDimensionsCode.Signal_001_CallBack = nil
+            -- 每次只能买一件 
+            index,seller,itemLink,stackPrice,count,avgGold = unpack(_buyitem)
+            ns.HookAu.LogWarn("购买",index,seller,itemLink,stackPrice,count)
+            PlaceAuctionBid("list", index, stackPrice)
+            -- 再次遍历
+            -- C_Timer.After(0.3, _doJL )
+        end)
+    end
+
+
+
+
+     _doJL = function () 
+        -- 这里需要重置 buylist 
+        waitBuyList = {}
+        for index = 1, GetNumAuctionItems("list") do
+            local auctionInfo = { GetAuctionItemInfo("list", index) }
+            local itemname = auctionInfo[1]
+            local stackPrice = auctionInfo[Auctionator.Constants.AuctionItemInfo.Buyout]
+            local count = auctionInfo[Auctionator.Constants.AuctionItemInfo.Quantity]
+            local seller = auctionInfo[Auctionator.Constants.AuctionItemInfo.Owner]
+            local avgGold = stackPrice/count/10000
+            local SaleStatus = auctionInfo[Auctionator.Constants.AuctionItemInfo.SaleStatus]
+            local itemLink = GetAuctionItemLink("list", index)
+            local res = auSearchJLItems[itemname]
+            if res then
+                if avgGold>0 and avgGold <= res and SaleStatus == 0   then
+                    -- 抢  
+                    ns.HookAu.LogWarn("购买-预备",index,seller,itemLink,stackPrice,count)
+                    table.insert(waitBuyList,{index,seller,itemLink,stackPrice,count,avgGold})
+                else
+                    --print(GetServerTime(),"不抢",index,seller,itemname,avgGold,count)
+                end
+            end
+
+            --print(GetServerTime(),itemLink,stackPrice,count,)
+        end
+        -- 异步购买
+        if #waitBuyList >= 1 then
+            _doBuy()
+        else
+            ns.HookAu.auDoItemsing = false
+            C_Timer.After(0.8, GAUTickerJIANLOU)
+        end
+    end
+
+ 
+    jlEventFrame:SetScript("OnEvent", function(self, eventName, ...)
+        ns.HookAu.LogInfo(eventName)
+        -- if eventName == "AUCTION_BIDDER_LIST_UPDATE" then
+        if eventName == "PLAYER_MONEY" then 
+            C_Timer.After(0.3, _doJL)
+        elseif eventName == "UI_ERROR_MESSAGE" then
+            local _, message = ...
+            if message == ERR_ITEM_NOT_FOUND  then
+                C_Timer.After(0.1, _doBuy)
+            end
+        elseif eventName == "CHAT_MSG_SYSTEM" then
+            local message = ...
+            -- 你的出价必须不低于最低竞标价
+            if message == ERR_AUCTION_MIN_BID then
+                C_Timer.After(0.5, _doJL)
+            end
+        end
+    end)
+
+
+    --ns.HookAu.LogInfo(canQuery,ns.HookAu.auDoItemsing ,ns.HookAu.auOpend)
+    if canQuery and not ns.HookAu.auDoItemsing and ns.HookAu.auOpend then
         SortAuctionSetSort("list", "unitprice")
-        auProcessItem(1)
+        QueryAuctionItems( nil , nil, nil , 0, nil, nil, false, true, AuctionCategories[6].filters)
+        if auJLLoopCount % 50 == 0 then
+            ns.HookAu.LogInfo("搜索中...搜索次数:" ,auJLLoopCount )
+        end
+        C_Timer.After(0.5, _doJL)
     end
 
 end
+
+
+
 
 local auEventFrame = CreateFrame("Frame", "MyauEventFrame")
 auEventFrame:RegisterEvent("AUCTION_HOUSE_SHOW")
@@ -158,10 +331,11 @@ auEventFrame:RegisterEvent("UI_ERROR_MESSAGE")
 auEventFrame:RegisterEvent("AUCTION_BIDDER_LIST_UPDATE")
 auEventFrame:RegisterEvent("AUCTION_OWNED_LIST_UPDATE")
 auEventFrame:RegisterEvent("AUCTION_ITEM_LIST_UPDATE")
+--auEventFrame:RegisterEvent("AUCTION_HOUSE_AUCTION_CREATED")
 
 
 auEventFrame:SetScript("OnEvent", function(self, event, ...)
-    if event == "AUCTION_HOUSE_SHOW" then    
+    if event == "AUCTION_HOUSE_SHOW" then
         print(GetServerTime(), "拍卖行已打开。",myTicker)
         ns.HookAu.auOpend  = true
         --myTicker = C_Timer.NewTicker(15, auTicker)
@@ -181,13 +355,19 @@ auEventFrame:SetScript("OnEvent", function(self, event, ...)
             ns.HookAu.hasError = true
         end
     elseif event == "AUCTION_HOUSE_CLOSED" then
-        print("拍卖行已关闭。",myTicker)
-        ns.HookAu.auOpend  = false
-        if ns.myTicker  and not ns.myTicker:IsCancelled() then 
-            ns.myTicker:Cancel()
+        print("拍卖行已关闭。",myTicker,jlEventFrame)
+        if jlEventFrame then 
+            jlEventFrame:UnregisterAllEvents() -- 停止接收所有事件
+            jlEventFrame:Hide() -- 隐藏Frame
+            jlEventFrame = nil -- 移除引用，使其可以被垃圾收集器回收
         end 
+        ns.HookAu.auOpend  = false
+        ns.HookAu.auDoItemsing = false
+        if ns.myTicker  and not ns.myTicker:IsCancelled() then
+            ns.myTicker:Cancel()
+        end
     end
-end) 
+end)
 
 
 
@@ -195,62 +375,22 @@ end)
 -------------------------------------------
 ------ 出售 
 
-local auSellItems ={
-    -- 物品名, 单价(gold), 最小数量,最大数量
-    -- {"瑟银锭",0.87,1,20},
-    {"青铜锭",0.88,1,20},
-}
-local  function do_next_au_seller(index) 
+
+local auSellItems = ns.HookAu.auSellItems
+
+local  function do_next_au_seller(index)
     if index > #auSellItems then
         print(GetServerTime(),"所有项目处理完毕")
-        if ns.HookAu.auOpend then 
-            C_Timer.After(5, auDoItemSell )
-            print(GetServerTime(),"启动新的一轮 auDoItemSell" ,auDoItemSell) 
-            return true 
-        end 
+        if ns.HookAu.auOpend then
+            C_Timer.After(5, ns.HookAu.auDoItemSell  )
+            print(GetServerTime(),"启动新的一轮 auDoItemSell" ,ns.HookAu.auDoItemSell )
+            return true
+        end
     end
-    return false 
+    return false
 end
 
 
-
-
-local function auSearchItemOnSell(index)
-    if do_next_au_seller(index) then
-        return 
-    end
-    local _item = auSellItems[index]    
-    local function auAUDoSellItems()
-        -- 遍历统计物品 
-        local _total = 0 
-        local _totalGold = 0 
-        local _minAvgGold=0.0
-        for index = 1, GetNumAuctionItems("list") do
-            local auctionInfo = { GetAuctionItemInfo("list", index) }
-            ----- 统计当前情况 
-            local stackPrice = auctionInfo[Auctionator.Constants.AuctionItemInfo.Buyout]
-            local count = auctionInfo[Auctionator.Constants.AuctionItemInfo.Quantity] 
-            local seller = auctionInfo[Auctionator.Constants.AuctionItemInfo.Owner]
-            local avgGold = stackPrice/count/10000 
-            local SaleStatus = auctionInfo[Auctionator.Constants.AuctionItemInfo.SaleStatus]
-            local _itemname, _goldavg , _min , _max = unpack(_item)         
-            _totalGold = _totalGold + stackPrice/10000
-            _total = _total + count
-            if 
-
-            
-        end
-
-        if ns.HookAu.auOpend and index+1 <= #auSellItems then 
-            -- print(GetServerTime(),"下一个物品",index+1)
-            C_Timer.After(5, function() auSearchItemOnSell(index + 1) end)
-        else 
-            do_next_au_seller(index+1)
-        end
-    end
-    QueryAuctionItems(_item[1], nil, nil , 0, nil, nil, false, true, nil) 
-    C_Timer.After(3, auAUDoSellItems) 
-end
 
 local function auGetItemSlotByName(itemName)
     for bagID = 0, 4 do
@@ -269,15 +409,124 @@ local function auGetItemSlotByName(itemName)
                     -- C_Timer.After(3, function ()
                     --     ClickAuctionSellItemButton()
                     -- end)
-                    return bagID ,slot, slotinfo                     
+                    return bagID ,slot, slotinfo
                 end
             end
         end
     end
-    return nil , nil ,nil 
+    return nil , nil ,nil
 end
 
- function auDoItemSell()
+local _noneSlotIndex = {}
+local function auSearchItemOnSell(index)
+    if  _noneSlotIndex[index] then
+        return auSearchItemOnSell(index+1)
+    end 
+    if do_next_au_seller(index) then
+        return 
+    end
+    if not ns.HookAu.auOpend then 
+        return
+    end
+    local _item = auSellItems[index]
+    ns.HookAu.LogDebug(_item,index)
+    -- _firstMinZhanbi 在搜索第一页我的商品组数
+    local _itemname, _goldavg , _goldmax , _max, _firstMinZhanbi = unpack(_item)
+    local _myCount = 0 -- 我的商品数量
+    local function auAUDoSellItems()
+        -- 遍历统计物品 
+        if not ns.HookAu.auOpend then
+            return
+        end
+        local _total = 0
+        local _totalGold = 0
+        local _minAvgGold=100000
+        local _avgList = {}
+        local _myName = UnitName("player");
+        local _myHasSell = false
+        for index = 1, GetNumAuctionItems("list") do
+            local auctionInfo = { GetAuctionItemInfo("list", index) }
+            ----- 统计当前情况 
+            local stackPrice = auctionInfo[Auctionator.Constants.AuctionItemInfo.Buyout]
+            local count = auctionInfo[Auctionator.Constants.AuctionItemInfo.Quantity]
+            local seller = auctionInfo[Auctionator.Constants.AuctionItemInfo.Owner]
+            local avgGold = stackPrice/count/10000
+            local SaleStatus = auctionInfo[Auctionator.Constants.AuctionItemInfo.SaleStatus]
+            _totalGold = _totalGold + stackPrice/10000
+
+            if _myName == seller and index < 15 then
+                -- 前15里面有自己
+                _myCount = _myCount + 1 
+                _myHasSell = true 
+            end
+            if _minAvgGold>avgGold then
+                _minAvgGold = avgGold
+            end
+            _total = _total + count
+            table.insert(_avgList,avgGold)
+        end
+        local _curGoldAvg = _totalGold/_total
+        local _priceGold = ns.HookAu.calculateSalePrice(_avgList)
+        if _priceGold < _goldavg then 
+            _priceGold = _goldavg 
+        end 
+        if _priceGold > _goldmax then 
+            _priceGold = _goldmax
+        end
+        ns.HookAu.LogInfo("当前物品 " .. _itemname, "我的商品:",_myCount ,_myHasSell, "平均值:" .. _curGoldAvg , "最低价:" .. _minAvgGold , "建议出价：" .. _priceGold)
+        -- 判断我自己当前的 ,等30秒 
+        if _myHasSell and ns.HookAu.auOpend and _myCount >= _firstMinZhanbi    then
+            ns.HookAu.LogInfo("存在我的商品,暂时不补货")
+            return C_Timer.After(10, function() auSearchItemOnSell(index + 1) end)
+        end
+
+        -- 获取背包 
+        local bagID ,slot, slotinfo = auGetItemSlotByName(_itemname)
+        if  bagID and slot and slotinfo then
+            local _count = slotinfo.stackCount
+            if  _count>_max then
+                _count = _max 
+            end
+            C_Container.PickupContainerItem(bagID, slot)
+            C_Timer.After(1, function ()
+                local infoType = GetCursorInfo()
+                if infoType == "item" then
+                    ClickAuctionSellItemButton()
+                    C_Timer.After(0.8,function()
+                        -- PostAuction(13184,13185,2,20,1)
+                        ns.HookAu.LogInfo("等待键盘事件",_itemname,_priceGold)
+                        ns.ThreeDimensionsCode:Signal_001(function ()
+                            --print(GetServerTime(), "Signal_001" ) 
+                            ns.ThreeDimensionsCode.Signal_001_CallBack = nil
+                            -- 每次只能买一件 
+                            ns.HookAu.LogInfo("上架",_itemname,math.floor(_priceGold*10000-1)*_count, math.floor(_priceGold*10000-1)*_count, 2, _count , 1)
+                            PostAuction(math.floor(_priceGold*10000-1)*_count, math.floor(_priceGold*10000-1)*_count, 2, _count , 1) 
+                            C_Timer.After(3, function() auSearchItemOnSell(index + 1)  end)
+                        end)
+                    end) 
+                end
+            end)
+
+            return 
+        else
+            -- 背包里找不到商品，从表里剔除 
+            -- table.remove(auSellItems, index)
+            _noneSlotIndex[index] = 1 
+        end
+
+        if ns.HookAu.auOpend and index+1 <= #auSellItems then
+            -- print(GetServerTime(),"下一个物品",index+1)
+            C_Timer.After(10, function() auSearchItemOnSell(index + 1) end)
+        else
+            do_next_au_seller(index+1)
+        end
+    end
+
+    QueryAuctionItems(_itemname, nil, nil , 0, nil, nil, false, true, nil)
+    C_Timer.After(3, auAUDoSellItems)
+end
+
+local  function auDoItemSell()
     local canQuery,canQueryAll = CanSendAuctionQuery()
     if canQueryAll then
         SortAuctionSetSort("list", "unitprice")
@@ -285,6 +534,6 @@ end
     end
 end
 
-ns.HookAu.auDoItemSell = auDoItemSell 
+ns.HookAu.auDoItemSell = auDoItemSell
 
 -- C_Timer.After(3, auDoItemSell)

@@ -341,6 +341,8 @@ L["NONE"] = "无"
 L["NONE_LEFT"] = "没有了"
 L["NUMBER_SEPARATOR"] = ","
 L["OPEN_ADDON_OPTIONS"] = "打开插件-自动扫描"
+L["OPEN_ADDON_AUTOJL"] = "打开插件-自动捡漏"
+
 L["OPEN_IN_SHOPPING_TAB"] = "在购物标签页中打开"
 L["OWNED_COLUMN"] = "我的售品？"
 L["PAYING_X"] = "为一件商品支付 %s "

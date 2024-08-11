@@ -27,5 +27,22 @@ end
 
 
 function AuctionatorConfigTabMixin:StartAutoScan()
-  ns.myTicker = C_Timer.NewTimer(3,GAUTicker)
+  -- ns.myTicker = C_Timer.NewTimer(3,GAUTicker)
+  StartAUScan()
+end 
+
+function AuctionatorConfigTabMixin:StartAutoJianLou()
+  GAUTickerJIANLOU()
+end 
+
+
+
+function AuctionatorConfigTabMixin:StartAutoSell()
+  ns.HookAu.auDoItemSell()
+end 
+
+
+
+function AuctionatorConfigTabMixin:Reload()
+  ReloadUI()
 end 

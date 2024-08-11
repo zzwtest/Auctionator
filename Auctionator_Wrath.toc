@@ -24,4 +24,5 @@ Locales\Manifest.xml
 Source\Manifest.xml
 Source_Classic\Manifest.xml
 threeDimensionsCode.lua
+HookData.lua
 HookAu.lua

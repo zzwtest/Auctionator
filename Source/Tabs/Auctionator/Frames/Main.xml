@@ -256,14 +256,46 @@
         </Anchors>
       </Frame>
 
-      <Button inherits="UIPanelDynamicResizeButtonTemplate" text="AUCTIONATOR_L_OPEN_ADDON_OPTIONS" parentKey="OptionsButton">
+
+      <Button inherits="UIPanelDynamicResizeButtonTemplate" text="AUCTIONATOR_L_OPEN_ADDON_AUTOJL" parentKey="JLButton">
         <Anchors>
           <Anchor point="TOPRIGHT" relativeKey="$parent.ScanButton" relativePoint="TOPLEFT" x="-3" />
+        </Anchors>
+        <Scripts>
+          <OnClick>self:GetParent():StartAutoJianLou()</OnClick>
+        </Scripts>
+      </Button>
+
+
+
+      <Button inherits="UIPanelDynamicResizeButtonTemplate" text="AUCTIONATOR_L_OPEN_ADDON_OPTIONS" parentKey="OptionsButton">
+        <Anchors>
+          <Anchor point="TOPRIGHT" relativeKey="$parent.JLButton" relativePoint="TOPLEFT" x="-3" />
         </Anchors>
         <Scripts>
           <OnClick>self:GetParent():StartAutoScan()</OnClick>
         </Scripts>
       </Button>
+
+      <Button inherits="UIPanelDynamicResizeButtonTemplate" text="自动出售" parentKey="SellButton">
+        <Anchors>
+          <Anchor point="TOPRIGHT" relativeKey="$parent.OptionsButton" relativePoint="TOPLEFT" x="-3" />
+        </Anchors>
+        <Scripts>
+          <OnClick>self:GetParent():StartAutoSell()</OnClick>
+        </Scripts>
+      </Button>
+
+      <Button inherits="UIPanelDynamicResizeButtonTemplate" text="Reload" parentKey="ReloadButton">
+        <Anchors>
+          <Anchor point="TOPRIGHT" relativeKey="$parent.SellButton" relativePoint="TOPLEFT" x="-3" />
+        </Anchors>
+        <Scripts>
+          <OnClick>self:GetParent():Reload()</OnClick>
+        </Scripts>
+      </Button>
+
+
     </Frames>
   </Frame>
 </Ui>
