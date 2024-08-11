@@ -174,6 +174,10 @@ local function GAUTicker()
             if message == "未找到指定物品"  then
                 C_Timer.After(0.5, _doBuy)
             end
+            if message == "内部拍卖错误"  then
+                C_Timer.After(0.5, _doBuy)
+            end
+
         elseif eventName == "CHAT_MSG_SYSTEM" then
             local message = ...
             ns.HookAu.LogWarn(message,message == ERR_AUCTION_MIN_BID)
