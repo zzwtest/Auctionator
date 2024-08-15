@@ -45,6 +45,7 @@ local  function do_next_au_auticker (index)
         if ns.HookAu.auOpend then
             C_Timer.After(3, StartAUScan )
             --print(GetServerTime(),"启动新的一轮 auTicker" ,StartAUScan)
+            ns.HookAu.LogInfo("启动新的一轮 StartAUScan")
             return true
         end
     end
@@ -68,14 +69,14 @@ local function GAUTicker()
     end
     if ns.HookAu.auDoItemsing then
         ns.HookAu.LogError("物品处理中。。")
-        C_Timer.After(1.5, GAUTickerJIANLOU)
+        C_Timer.After(1.5, GAUTicker)
         return 
     end
     if not checkGold() then
         ns.HookAu.LogError("金币达到上限 终止扫货 ")
         return
     end
-    local _doScan = nil 
+    
     local _doBuy = nil 
     local auAUDoItems = nil 
     local waitBuyList = {}
@@ -115,7 +116,9 @@ local function GAUTicker()
             local auctionInfo = { GetAuctionItemInfo("list", index) }
             local itemLink = GetAuctionItemLink("list", index)
             ----- 统计当前情况 
+            local item_name = auctionInfo[1]
             local stackPrice = auctionInfo[Auctionator.Constants.AuctionItemInfo.Buyout]
+
             local count = auctionInfo[Auctionator.Constants.AuctionItemInfo.Quantity]
             local seller = auctionInfo[Auctionator.Constants.AuctionItemInfo.Owner]
             if not seller then 
@@ -124,7 +127,7 @@ local function GAUTicker()
             local avgGold = stackPrice/count/10000
             local SaleStatus = auctionInfo[Auctionator.Constants.AuctionItemInfo.SaleStatus]
             
-            if avgGold>0 and avgGold <= _goldavg and count >= _min and count <= _max and  SaleStatus == 0 then
+            if item_name == _itemname  and avgGold>0 and avgGold <= _goldavg and count >= _min and count <= _max and  SaleStatus == 0 then
                 ns.HookAu.LogWarn("购买-预备",index,seller,itemLink,stackPrice,avgGold)
                 table.insert(waitBuyList,{index,seller,itemLink,stackPrice,count,avgGold})
             end
@@ -191,6 +194,10 @@ local function GAUTicker()
     if canQuery and not ns.HookAu.auDoItemsing and ns.HookAu.auOpend then
         SortAuctionSetSort("list", "unitprice")
         auProcessItemFunc(1)
+    else
+        -- 暂时无法搜索 
+        ns.HookAu.LogError("搜索按钮不可用 稍后重试。。")
+        C_Timer.After(3, GAUTicker)
     end
 
 end
@@ -239,9 +246,14 @@ function GAUTickerJIANLOU()
     _doBuy = function ()
         ns.HookAu.auDoItemsing = true 
         if #waitBuyList == 0 then 
-            ns.HookAu.auDoItemsing = false
+            ns.HookAu.auDoItemsing = false 
+
+            ns.HookAu.LogError("_doBuy call _doJL " )
+            C_Timer.After(0.5, function() _doJL()  end )
             return
         end
+
+  
         local _buyitem = table.remove(waitBuyList,#waitBuyList)
         ns.ThreeDimensionsCode:Signal_001(function ()
             --print(GetServerTime(), "Signal_001" ) 
@@ -320,7 +332,7 @@ function GAUTickerJIANLOU()
         if auJLLoopCount % 50 == 0 then
             ns.HookAu.LogInfo("搜索中...搜索次数:" ,auJLLoopCount )
         end
-        C_Timer.After(0.5, _doJL)
+        C_Timer.After(1, _doJL)
     end
 
 end
