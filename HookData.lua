@@ -17,22 +17,21 @@ local auHordeSearchItems ={
     -- 物品名, 单价(gold), 最小数量,最大数量
 
 --    {"永恒之水",1.45,1,20},
-    {"无限之尘",1.19,1,20},
-    --{"奥法之尘",1,1,20},
+    {"无限之尘",1.1,1,20},
+    {"奥法之尘",1,1,20},
     --{"金矿石",0.95,1,20},
-    {"钴锭",1.25,1,20},
 
-   --{"奥杜尔的圣物",0.050,1,200},
+   --{"奥杜尔的圣物",0.048,1,200},
 
 }
 -- 联盟搜索
 local auAllianceSearchItems ={
     -- 物品名, 单价(gold), 最小数量,最大数量
-    {"青铜锭",0.90,1,20},
-    {"铜矿石",0.34,1,20},
-    {"锡矿石",0.9,1,20},
+    {"青铜锭",0.99,1,20},
+    {"铜矿石",0.38,1,20},
+    {"锡矿石",1.1,1,20},
     {"秘银矿石",3.1,1,20},
-    {"秘银锭",3.05,1,20},
+    {"秘银锭",3.1,1,20},
 
     {"铁矿石",1.2,1,20},
     {"铁锭",1.2,1,20},
@@ -40,7 +39,7 @@ local auAllianceSearchItems ={
     {"铜锭",0.35,1,20},
     --{"亚麻布",0.065,1,20},
     --{"毛料",0.20,1,20},
-   -- {"丝绸",0.05,1,20},
+    --{"丝绸",0.05,1,20},
 
     {"沉重的石头",0.65,1,20},
     -- {"银矿石",5,1,20},
@@ -61,8 +60,8 @@ end
 -- 联盟 出售
 local auSellItemsHorde ={
     -- 物品名, 单价(gold), 最大单价 ,单组最大数量，首页我占有最小数量 
-    --{"奥杜尔的圣物",0.17 , 0.48  , 40,3},
-     {"奥法之尘",1.9,   5  ,  8, 3},
+    {"奥杜尔的圣物",0.14 , 0.48  , 40,3},
+    --  {"奥法之尘",1.9,   5  ,  8, 3},
  
 }
 
@@ -137,6 +136,42 @@ auSearchJLItems["金矿石"] = 0.06
 auSearchJLItems["铜矿石"] = 0.06
 auSearchJLItems["锡锭"] = 0.06
 auSearchJLItems["金矿石"] = 0.06
+
+auSearchJLItems["魔铁锭"] = 0.06
+auSearchJLItems["魔化之泪"] = 0.06
+auSearchJLItems["永恒生命"] = 0.06
+auSearchJLItems["水之结晶"] = 0.06
+auSearchJLItems["香辣猛犸小吃"] = 0.06
+auSearchJLItems["永恒暗影"] = 0.06
+auSearchJLItems["血玉石"] = 0.06
+auSearchJLItems["永恒之水"] = 0.06
+auSearchJLItems["银矿石"] = 0.06
+auSearchJLItems["暗月卡片：死亡"] = 0.06
+auSearchJLItems["永恒腰带扣"] = 0.06
+auSearchJLItems["冰冻宝珠"] = 0.06
+auSearchJLItems["深渊水晶"] = 0.06
+auSearchJLItems["法纹布"] = 0.06
+auSearchJLItems["食谱：美味风蛇"] = 0.06
+
+
+auSearchJLItems["月影布"] = 0.06
+auSearchJLItems["速度药水"] = 0.06
+auSearchJLItems["狂野魔法药水"] = 0.06
+auSearchJLItems["幻象之尘"] = 0.06
+auSearchJLItems["乌纹布"] = 0.06
+auSearchJLItems["海妖之泪"] = 0.06
+
+auSearchJLItems["钢铁议会披风"] = 0.06
+auSearchJLItems["秘银矿石"] = 0.06
+auSearchJLItems["冰鳞腿甲片"] = 0.06
+auSearchJLItems["霜皮腿甲片"] = 0.06
+auSearchJLItems["结缔皮"] = 0.06
+
+auSearchJLItems["泰坦神铁锭"] = 0.06
+auSearchJLItems["暗月卡片：狂暴！"] = 0.06
+auSearchJLItems["丝绸"] = 0.06
+auSearchJLItems["强效宇宙精华"] = 0.06
+ 
 -- auSearchJLItems["新鲜的滑皮鲭鱼"] = 0.0347
 -- auSearchJLItems["煤块"] = 0.04
 

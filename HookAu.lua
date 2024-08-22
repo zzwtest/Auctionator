@@ -213,9 +213,33 @@ end
 --- 
 local auSearchJLItems = ns.HookAu.auSearchJLItems
 
+local function createCategoryFilterIterator()
+    -- 定义一个表来存储我们需要的顺序
+    local order = {2,4,10, 6, 9}
+    local index = 0  -- 初始化索引
 
+    -- 返回一个闭包函数
+    return function()
+        index = index + 1  -- 每次调用时增加索引
+        
+        -- 如果索引超出了order的长度，就从头开始
+        if index > #order then
+            index = 1
+        end
+
+        -- 获取当前索引对应的AuctionCategories的filters
+        local categoryIndex = order[index]
+        if AuctionCategories[categoryIndex] then
+            return AuctionCategories[categoryIndex].filters
+        else
+            return nil  -- 如果找不到对应的分类，返回nil
+        end
+    end
+end
+local getNextFilters = createCategoryFilterIterator()
 
 function GAUTickerJIANLOU()
+    
     if not jlEventFrame then 
         jlEventFrame = CreateFrame("Frame", "MyaujlEventFrame")
         jlEventFrame:RegisterEvent("UI_ERROR_MESSAGE")
@@ -300,7 +324,7 @@ function GAUTickerJIANLOU()
             _doBuy()
         else
             ns.HookAu.auDoItemsing = false
-            C_Timer.After(0.8, GAUTickerJIANLOU)
+            C_Timer.After(1, GAUTickerJIANLOU)
         end
     end
 
@@ -328,7 +352,7 @@ function GAUTickerJIANLOU()
     --ns.HookAu.LogInfo(canQuery,ns.HookAu.auDoItemsing ,ns.HookAu.auOpend)
     if canQuery and not ns.HookAu.auDoItemsing and ns.HookAu.auOpend then
         SortAuctionSetSort("list", "unitprice")
-        QueryAuctionItems( nil , nil, nil , 0, nil, nil, false, true, AuctionCategories[6].filters)
+        QueryAuctionItems( nil , nil, nil , 0, nil, nil, false, true, getNextFilters())
         if auJLLoopCount % 50 == 0 then
             ns.HookAu.LogInfo("搜索中...搜索次数:" ,auJLLoopCount )
         end
