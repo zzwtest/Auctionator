@@ -272,8 +272,8 @@ function GAUTickerJIANLOU()
         if #waitBuyList == 0 then 
             ns.HookAu.auDoItemsing = false 
 
-            ns.HookAu.LogError("_doBuy call _doJL " )
-            C_Timer.After(0.5, function() _doJL()  end )
+            ns.HookAu.LogError("_doBuy call GAUTickerJIANLOU " )
+            C_Timer.After(0.5, function() GAUTickerJIANLOU()  end )
             return
         end
 
