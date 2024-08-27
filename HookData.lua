@@ -91,34 +91,32 @@ end
 
 
 local auSearchJLItems ={}
-auSearchJLItems["梦叶草"] = 0.2
-auSearchJLItems["巫妖花"] = 0.6
-auSearchJLItems["蛇信草"] = 0.6
-auSearchJLItems["太阳草"] = 0.6
-auSearchJLItems["雨燕草"] = 0.06
+auSearchJLItems["梦叶草"] = 0.3
+auSearchJLItems["巫妖花"] = 1.5
+auSearchJLItems["蛇信草"] = 0.95 
+auSearchJLItems["冰棘草"] = 0.95 
+auSearchJLItems["卷丹"] = 0.4
 
-auSearchJLItems["无限之尘"] = 0.2
-auSearchJLItems["奥法之尘"] = 0.2
+auSearchJLItems["无限之尘"] = 0.6
+auSearchJLItems["奥法之尘"] = 0.6
 
-auSearchJLItems["奇异之尘"] = 0.2
-auSearchJLItems["魔化之泪"] = 0.2
-auSearchJLItems["幻象之尘"] = 0.2
-auSearchJLItems["硬甲皮"] = 0.06
+auSearchJLItems["奇异之尘"] = 0.1
+auSearchJLItems["魔化之泪"] = 100
+auSearchJLItems["幻象之尘"] = 0.4
+auSearchJLItems["硬甲皮"] = 0.1
 
 
 auSearchJLItems["新鲜的刺须鲶鱼"] = 0.2
-auSearchJLItems["水母"] = 0.2
-auSearchJLItems["冰河鲑鱼"] = 0.6
-auSearchJLItems["北风水母"] =0.6
-auSearchJLItems["铲齿鹿肋排"] = 0.6
-auSearchJLItems["蚌肉"] = 0.6
-auSearchJLItems["猛犸肉"] =0.6
-auSearchJLItems["北地香料"] =0.6
-auSearchJLItems["蚌肉"] = 0.6
-auSearchJLItems["龙鳞天使鱼"] = 0.6
-auSearchJLItems["小型亚口鱼"] = 0.6
-
-
+-- auSearchJLItems["水母"] = 0.2
+-- auSearchJLItems["冰河鲑鱼"] = 0.6
+-- auSearchJLItems["北风水母"] =0.6
+-- auSearchJLItems["铲齿鹿肋排"] = 0.6
+-- auSearchJLItems["蚌肉"] = 0.6
+-- auSearchJLItems["猛犸肉"] =0.2
+auSearchJLItems["北地香料"] =1
+-- auSearchJLItems["蚌肉"] = 0.6
+-- auSearchJLItems["龙鳞天使鱼"] = 0.6
+-- auSearchJLItems["小型亚口鱼"] = 0.1
 
 auSearchJLItems["源生之土"] = 0.6
 auSearchJLItems["水之结晶"] =0.6
@@ -127,32 +125,38 @@ auSearchJLItems["欺诈宝珠"] =0.6
 auSearchJLItems["源生之土"] = 0.6
 auSearchJLItems["艾泽拉斯钻石"] =0.6
 
-auSearchJLItems["铁锭"] = 0.06
-auSearchJLItems["银锭"] = 0.6
-auSearchJLItems["瑟银锭"] = 0.6
-auSearchJLItems["青铜锭"] =0.6
+auSearchJLItems["秘银锭"] = 3.1
+auSearchJLItems["秘银矿"] = 3.1
+auSearchJLItems["银锭"] = 4
+auSearchJLItems["瑟银矿石"] = 0.85
+auSearchJLItems["瑟银锭"] = 0.8
+auSearchJLItems["青铜锭"] =0.99
 auSearchJLItems["血玉石"] = 0.6
 auSearchJLItems["大猫眼石"] = 0.6
 auSearchJLItems["铜锭"] = 0.06
-auSearchJLItems["铁矿石"] = 0.6
+auSearchJLItems["铁锭"] = 1.1
+auSearchJLItems["铁矿石"] = 1.1
 auSearchJLItems["魔钢锭"] = 0.6
 auSearchJLItems["锡矿石"] = 0.6
 auSearchJLItems["龙眼石"] = 0.6
 auSearchJLItems["次级月亮石"] = 0.6
 auSearchJLItems["金矿石"] = 0.2
-auSearchJLItems["铜矿石"] = 0.2
-auSearchJLItems["锡锭"] = 0.6
+auSearchJLItems["铜矿石"] = 0.4
+auSearchJLItems["锡锭"] = 0.9
 auSearchJLItems["金矿石"] = 0.6
+auSearchJLItems["沉重的石头"] = 0.6
+auSearchJLItems["萨隆邪铁矿石"] = 0.65
+auSearchJLItems["银矿石"] = 4
+
 
 auSearchJLItems["魔铁锭"] = 0.6
 auSearchJLItems["魔化之泪"] = 0.6
 auSearchJLItems["永恒生命"] = 0.6
 auSearchJLItems["水之结晶"] = 0.2
-auSearchJLItems["香辣猛犸小吃"] = 0.6
+auSearchJLItems["香辣猛犸小吃"] = 1
 auSearchJLItems["永恒暗影"] = 0.6
 auSearchJLItems["血玉石"] = 0.6
 auSearchJLItems["永恒之水"] = 1
-auSearchJLItems["银矿石"] = 1
 auSearchJLItems["暗月卡片：死亡"] = 1
 auSearchJLItems["永恒腰带扣"] = 1
 auSearchJLItems["冰冻宝珠"] = 1
@@ -164,7 +168,6 @@ auSearchJLItems["食谱：美味风蛇"] = 1
 auSearchJLItems["月影布"] = 1
 auSearchJLItems["速度药水"] = 1
 auSearchJLItems["狂野魔法药水"] = 0.6
-auSearchJLItems["幻象之尘"] = 0.2
 auSearchJLItems["乌纹布"] =1
 auSearchJLItems["海妖之泪"] = 1
 

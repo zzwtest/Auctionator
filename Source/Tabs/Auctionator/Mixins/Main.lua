@@ -32,7 +32,7 @@ function AuctionatorConfigTabMixin:StartAutoScan()
 end 
 
 function AuctionatorConfigTabMixin:StartAutoJianLou()
-  GAUTickerJIANLOU()
+  GAUTickerJIANLOU_TSM()
 end 
 
 

@@ -52,8 +52,6 @@ local  function do_next_au_auticker (index)
     return false
 end
 
-
- 
 -- /console scriptErrors 1 
 local function GAUTicker()
     if not jlEventFrame then 
@@ -237,6 +235,144 @@ local function createCategoryFilterIterator()
     end
 end
 local getNextFilters = createCategoryFilterIterator()
+
+-- 新的捡漏机制 按物品上架时间
+-- /script QueryAuctionItems(nil, 0, 0, 53, false, 0, false, false, nil)
+-- /run SortAuctionClearSort("list")
+-- /run SortAuctionSetSort("list", 'seller', false);SortAuctionSetSort("list", 'quantity', false);SortAuctionSetSort("list", 'unitprice', false);
+-- /run SortAuctionApplySort("list")
+local _tsm_total_au_items  = 0 
+local _tsm_pages = 0 
+
+function GAUTickerJIANLOU_TSM()
+    if not jlEventFrame then 
+        jlEventFrame = CreateFrame("Frame", "MyaujlEventFrame")
+        jlEventFrame:RegisterEvent("UI_ERROR_MESSAGE")
+        jlEventFrame:RegisterEvent("PLAYER_MONEY")
+        jlEventFrame:RegisterEvent("CHAT_MSG_SYSTEM")
+        jlEventFrame:RegisterEvent("AUCTION_BIDDER_LIST_UPDATE")
+
+    end 
+    auJLLoopCount = auJLLoopCount + 1
+    if not ns.HookAu.auOpend then
+        return
+    end
+    if ns.HookAu.auDoItemsing then
+        ns.HookAu.LogError("物品处理中。。")
+        C_Timer.After(1.5, GAUTickerJIANLOU_TSM)
+        return 
+    end
+    if not checkGold() then
+        ns.HookAu.LogError("金币达到上限 终止扫货 ")
+        return
+    end
+    local _doJL = nil 
+    local _doBuy = nil 
+    
+    canQuery,canQueryAll = CanSendAuctionQuery()
+    -- print( GetServerTime(), "auTicker  canQuery:", canQuery,ns.HookAu.auDoItemsing,"auOpend",ns.HookAu.auOpend)  
+    local waitBuyList = {}
+    _doBuy = function ()
+        ns.HookAu.auDoItemsing = true 
+        if #waitBuyList == 0 then 
+            ns.HookAu.auDoItemsing = false 
+
+            ns.HookAu.LogError("_doBuy call GAUTickerJIANLOU_TSM " )
+            C_Timer.After(0.5, function() GAUTickerJIANLOU_TSM()  end )
+            return
+        end
+
+  
+        local _buyitem = table.remove(waitBuyList,#waitBuyList)
+        ns.ThreeDimensionsCode:Signal_001(function ()
+            --print(GetServerTime(), "Signal_001" ) 
+            ns.ThreeDimensionsCode.Signal_001_CallBack = nil
+            -- 每次只能买一件 
+            index,seller,itemLink,stackPrice,count,avgGold = unpack(_buyitem)
+            ns.HookAu.LogWarn("购买",index,seller,itemLink,stackPrice,count)
+            PlaceAuctionBid("list", index, stackPrice)
+            -- 再次遍历
+            -- C_Timer.After(0.3, _doJL )
+        end)
+    end
+     _doJL = function () 
+        -- 这里需要重置 buylist 
+        waitBuyList = {}
+        local __batchcount, __total  = GetNumAuctionItems("list") 
+        _tsm_total_au_items = __total 
+        _tsm_pages = ceil(_tsm_total_au_items / 50) - 1 
+        for index = 1, __batchcount do
+            local auctionInfo = { GetAuctionItemInfo("list", index) }
+            local itemname = auctionInfo[1]
+            local stackPrice = auctionInfo[Auctionator.Constants.AuctionItemInfo.Buyout]
+            local count = auctionInfo[Auctionator.Constants.AuctionItemInfo.Quantity]
+            local seller = auctionInfo[Auctionator.Constants.AuctionItemInfo.Owner]
+            local avgGold = stackPrice/count/10000
+            local SaleStatus = auctionInfo[Auctionator.Constants.AuctionItemInfo.SaleStatus]
+            local itemLink = GetAuctionItemLink("list", index)
+            local res = auSearchJLItems[itemname]
+            if res then
+                if avgGold>0 and avgGold <= res and SaleStatus == 0   then
+                    -- 抢  
+                    ns.HookAu.LogWarn("购买-预备",index,seller,itemLink,stackPrice,count)
+                    table.insert(waitBuyList,{index,seller,itemLink,stackPrice,count,avgGold})
+                else
+                    --print(GetServerTime(),"不抢",index,seller,itemname,avgGold,count)
+                end
+            end
+
+            --print(GetServerTime(),itemLink,stackPrice,count,)
+        end
+        -- 异步购买
+        if #waitBuyList >= 1 then
+            _doBuy()
+        else
+            ns.HookAu.auDoItemsing = false
+            C_Timer.After(1, GAUTickerJIANLOU_TSM)
+        end
+    end
+
+ 
+    jlEventFrame:SetScript("OnEvent", function(self, eventName, ...)
+        ns.HookAu.LogInfo(eventName)
+        -- if eventName == "AUCTION_BIDDER_LIST_UPDATE" then
+        if eventName == "PLAYER_MONEY" then 
+            C_Timer.After(0.3, _doJL)
+        elseif eventName == "UI_ERROR_MESSAGE" then
+            local _, message = ...
+            if message == ERR_ITEM_NOT_FOUND  then
+                C_Timer.After(0.1, _doBuy)
+            end
+        elseif eventName == "CHAT_MSG_SYSTEM" then
+            local message = ...
+            -- 你的出价必须不低于最低竞标价
+            if message == ERR_AUCTION_MIN_BID then
+                C_Timer.After(0.5, _doJL)
+            end
+        end
+    end)
+
+
+    --ns.HookAu.LogInfo(canQuery,ns.HookAu.auDoItemsing ,ns.HookAu.auOpend)
+    if canQuery and not ns.HookAu.auDoItemsing and ns.HookAu.auOpend then
+        -- SortAuctionSetSort("list", "unitprice")
+        SortAuctionClearSort("list")
+        QueryAuctionItems( nil , nil, nil , _tsm_pages , nil, nil, false, false, nil ) 
+        
+        if auJLLoopCount % 20 == 0 then
+            ns.HookAu.LogInfo(_tsm_pages,_tsm_total_au_items)
+            ns.HookAu.LogInfo("搜索中...搜索次数:" ,auJLLoopCount )
+        end
+        C_Timer.After(1, _doJL)
+ 
+    else
+        -- 暂时无法搜索 
+        ns.HookAu.LogError("搜索按钮不可用 稍后重试。。")
+        C_Timer.After(2, GAUTickerJIANLOU_TSM)
+    end
+
+
+end 
 
 function GAUTickerJIANLOU()
     
