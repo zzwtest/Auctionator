@@ -325,3 +325,14 @@ end
 local threeDimensionsCode = ThreeDimensionsCode:new()
 threeDimensionsCode:initialize()
 ns.ThreeDimensionsCode = threeDimensionsCode
+
+
+
+function  TestCode()
+    ns.ThreeDimensionsCode:Signal_001(function ()
+        --print(GetServerTime(), "Signal_001" ) 
+        ns.ThreeDimensionsCode.Signal_001_CallBack = nil
+        -- 每次只能买一件 
+        ns.HookAu.LogInfo("test")
+     end)
+end

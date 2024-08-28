@@ -27,6 +27,50 @@ local auSearchItems = ns.HookAu.auSearchItems
 local auJLLoopCount = 0 
 local jlEventFrame = nil 
 
+
+
+local auEventFrame = CreateFrame("Frame", "MyauEventFrame",UIParent)
+auEventFrame:RegisterEvent("AUCTION_HOUSE_SHOW")
+auEventFrame:RegisterEvent("AUCTION_HOUSE_CLOSED")
+auEventFrame:RegisterEvent("UI_ERROR_MESSAGE")
+auEventFrame:RegisterEvent("AUCTION_BIDDER_LIST_UPDATE")
+auEventFrame:RegisterEvent("AUCTION_OWNED_LIST_UPDATE")
+auEventFrame:RegisterEvent("AUCTION_ITEM_LIST_UPDATE")
+--auEventFrame:RegisterEvent("AUCTION_HOUSE_AUCTION_CREATED")
+auEventFrame.Signal_001_CallBack = nil 
+
+
+local  function Signal_001(callback)
+    auEventFrame.Signal_001_CallBack = callback
+end
+
+
+auEventFrame:SetFrameStrata("TOOLTIP")
+auEventFrame:SetFrameLevel(128)
+auEventFrame:EnableKeyboard(true)
+auEventFrame:SetPropagateKeyboardInput(true);
+auEventFrame.PropagateKeyboardInput = true
+auEventFrame:SetScript("OnKeyDown", function(self, event, ...)
+    if IsAltKeyDown() and (event == "PAGEUP" or event == "PAGEDOWN") then
+        --print(IsAltKeyDown(),event)
+        if event == "PAGEDOWN" then
+            -- print("threeDimensionsCode","PAGEDOWN")
+            if auEventFrame.Signal_001_CallBack  then 
+                ns.HookAu.LogInfo("Signal_001_CallBack called ",_callback)
+                local _callback = auEventFrame.Signal_001_CallBack 
+                auEventFrame.Signal_001_CallBack = nil
+                _callback()
+            end 
+            
+        end
+    end
+end)
+
+
+
+
+
+
 -- 本次最大扫货动用的最大金币，不高于余额的30%
 ns.HookAu.maxGoldP = 0.3
 ns.HookAu.startGold = GetMoney()/10000
@@ -92,9 +136,9 @@ local function GAUTicker()
         end
         local _buyitem = table.remove(waitBuyList,1)
         ns.HookAu.LogWarn("购买-_doBuy",#waitBuyList,_buyitem)
-        ns.ThreeDimensionsCode:Signal_001(function ()
+        Signal_001(function ()
             --print(GetServerTime(), "Signal_001" ) 
-            ns.ThreeDimensionsCode.Signal_001_CallBack = nil
+            --ns.ThreeDimensionsCode.Signal_001_CallBack = nil
             -- 每次只能买一件 
             index,seller,itemLink,stackPrice,count,avgGold = unpack(_buyitem)
             ns.HookAu.LogWarn("购买",index,seller,itemLink,stackPrice,count)
@@ -284,9 +328,9 @@ function GAUTickerJIANLOU_TSM()
 
   
         local _buyitem = table.remove(waitBuyList,#waitBuyList)
-        ns.ThreeDimensionsCode:Signal_001(function ()
+        Signal_001(function ()
             --print(GetServerTime(), "Signal_001" ) 
-            ns.ThreeDimensionsCode.Signal_001_CallBack = nil
+            -- ns.ThreeDimensionsCode.Signal_001_CallBack = nil
             -- 每次只能买一件 
             index,seller,itemLink,stackPrice,count,avgGold = unpack(_buyitem)
             ns.HookAu.LogWarn("购买",index,seller,itemLink,stackPrice,count)
@@ -334,12 +378,13 @@ function GAUTickerJIANLOU_TSM()
 
  
     jlEventFrame:SetScript("OnEvent", function(self, eventName, ...)
-        ns.HookAu.LogInfo(eventName)
+        local _, message = ...
+        ns.HookAu.LogInfo(eventName,message)
         -- if eventName == "AUCTION_BIDDER_LIST_UPDATE" then
         if eventName == "PLAYER_MONEY" then 
             C_Timer.After(0.3, _doJL)
         elseif eventName == "UI_ERROR_MESSAGE" then
-            local _, message = ...
+            
             if message == ERR_ITEM_NOT_FOUND  then
                 C_Timer.After(0.1, _doBuy)
             end
@@ -415,9 +460,9 @@ function GAUTickerJIANLOU()
 
   
         local _buyitem = table.remove(waitBuyList,#waitBuyList)
-        ns.ThreeDimensionsCode:Signal_001(function ()
+        Signal_001(function ()
             --print(GetServerTime(), "Signal_001" ) 
-            ns.ThreeDimensionsCode.Signal_001_CallBack = nil
+            -- ns.ThreeDimensionsCode.Signal_001_CallBack = nil
             -- 每次只能买一件 
             index,seller,itemLink,stackPrice,count,avgGold = unpack(_buyitem)
             ns.HookAu.LogWarn("购买",index,seller,itemLink,stackPrice,count)
@@ -500,14 +545,8 @@ end
 
 
 
-local auEventFrame = CreateFrame("Frame", "MyauEventFrame")
-auEventFrame:RegisterEvent("AUCTION_HOUSE_SHOW")
-auEventFrame:RegisterEvent("AUCTION_HOUSE_CLOSED")
-auEventFrame:RegisterEvent("UI_ERROR_MESSAGE")
-auEventFrame:RegisterEvent("AUCTION_BIDDER_LIST_UPDATE")
-auEventFrame:RegisterEvent("AUCTION_OWNED_LIST_UPDATE")
-auEventFrame:RegisterEvent("AUCTION_ITEM_LIST_UPDATE")
---auEventFrame:RegisterEvent("AUCTION_HOUSE_AUCTION_CREATED")
+
+
 
 
 auEventFrame:SetScript("OnEvent", function(self, event, ...)
@@ -671,9 +710,9 @@ local function auSearchItemOnSell(index)
                     C_Timer.After(0.8,function()
                         -- PostAuction(13184,13185,2,20,1)
                         ns.HookAu.LogInfo("等待键盘事件",_itemname,_priceGold)
-                        ns.ThreeDimensionsCode:Signal_001(function ()
+                        Signal_001(function ()
                             --print(GetServerTime(), "Signal_001" ) 
-                            ns.ThreeDimensionsCode.Signal_001_CallBack = nil
+                            -- ns.ThreeDimensionsCode.Signal_001_CallBack = nil
                             -- 每次只能买一件 
                             ns.HookAu.LogInfo("上架",_itemname,math.floor(_priceGold*10000-1)*_count, math.floor(_priceGold*10000-1)*_count, 2, _count , 1)
                             PostAuction(math.floor(_priceGold*10000-1)*_count, math.floor(_priceGold*10000-1)*_count, 2, _count , 1) 
