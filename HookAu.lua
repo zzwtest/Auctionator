@@ -333,7 +333,7 @@ function GAUTickerJIANLOU_TSM()
             -- ns.ThreeDimensionsCode.Signal_001_CallBack = nil
             -- 每次只能买一件 
             index,seller,itemLink,stackPrice,count,avgGold = unpack(_buyitem)
-            ns.HookAu.LogWarn("购买",index,seller,itemLink,stackPrice,count)
+            ns.HookAu.LogWarn("购买",index,seller,itemLink,stackPrice,count,avgGold)
             PlaceAuctionBid("list", index, stackPrice)
             -- 再次遍历
             -- C_Timer.After(0.3, _doJL )
@@ -358,7 +358,7 @@ function GAUTickerJIANLOU_TSM()
             if res then
                 if avgGold>0 and avgGold <= res and SaleStatus == 0   then
                     -- 抢  
-                    ns.HookAu.LogWarn("购买-预备",index,seller,itemLink,stackPrice,count)
+                    ns.HookAu.LogWarn("购买-预备",index,seller,itemLink,stackPrice,count,avgGold)
                     table.insert(waitBuyList,{index,seller,itemLink,stackPrice,count,avgGold})
                 else
                     --print(GetServerTime(),"不抢",index,seller,itemname,avgGold,count)
