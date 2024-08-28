@@ -136,7 +136,6 @@ auSearchJLItems["大猫眼石"] = 0.6
 
 auSearchJLItems["铁锭"] = 1.1
 auSearchJLItems["铁矿石"] = 1.1
-auSearchJLItems["魔钢锭"] = 0.6
 auSearchJLItems["锡矿石"] = 0.6
 auSearchJLItems["龙眼石"] = 0.6
 auSearchJLItems["次级月亮石"] = 0.6
@@ -149,8 +148,8 @@ auSearchJLItems["沉重的石头"] = 0.6
 auSearchJLItems["萨隆邪铁矿石"] = 0.65
 auSearchJLItems["银矿石"] = 3.8
 auSearchJLItems["坚固的石头"] = 0.28
-
-auSearchJLItems["魔铁锭"] = 0.6
+auSearchJLItems["魔铁矿石"] = 4 
+auSearchJLItems["魔铁锭"] = 8.3
 auSearchJLItems["魔化之泪"] = 0.6
 auSearchJLItems["永恒生命"] = 0.6
 auSearchJLItems["水之结晶"] = 0.2

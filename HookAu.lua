@@ -385,6 +385,10 @@ function GAUTickerJIANLOU_TSM()
             C_Timer.After(0.3, _doJL)
         elseif eventName == "UI_ERROR_MESSAGE" then
             
+            if message == ERR_AUCTION_DATABASE_ERROR  then
+                C_Timer.After(0.5, _doBuy)
+            end
+
             if message == ERR_ITEM_NOT_FOUND  then
                 C_Timer.After(0.1, _doBuy)
             end
