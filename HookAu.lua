@@ -325,8 +325,11 @@ function GAUTickerJIANLOU_TSM()
             C_Timer.After(0.5, function() GAUTickerJIANLOU_TSM()  end )
             return
         end
-
-  
+        local _canQuery,_canQueryAll = CanSendAuctionQuery()
+        if(not _canQuery) then
+            ns.HookAu.LogError("_doBuy not  _canQuery wait 0.3" )
+            return C_Timer.After(0.3, _doBuy)
+        end
         local _buyitem = table.remove(waitBuyList,#waitBuyList)
         Signal_001(function ()
             --print(GetServerTime(), "Signal_001" ) 
