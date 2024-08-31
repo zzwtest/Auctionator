@@ -138,7 +138,7 @@ auSearchJLItems["锡矿石"] = 0.9
 auSearchJLItems["锡锭"] = 1
 auSearchJLItems["龙眼石"] = 48
 auSearchJLItems["次级月亮石"] =2.5
-auSearchJLItems["铜矿石"] = 0.46
+auSearchJLItems["铜矿石"] = 0.5
 auSearchJLItems["铜锭"] = 0.5
 
 auSearchJLItems["金矿石"] = 0.4
@@ -166,7 +166,7 @@ auSearchJLItems["冰冻宝珠"] = 8
 auSearchJLItems["深渊水晶"] = 28
 auSearchJLItems["法纹布"] = 100
 auSearchJLItems["食谱：美味风蛇"] = 30
-auSearchJLItems["冰霜巨龙合剂"] = 7.9
+auSearchJLItems["冰霜巨龙合剂"] = 7.8
 auSearchJLItems["无尽怒气合剂"] = 7
 
 auSearchJLItems["月影布"] = 1
