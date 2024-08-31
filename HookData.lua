@@ -166,12 +166,12 @@ auSearchJLItems["冰冻宝珠"] = 8
 auSearchJLItems["深渊水晶"] = 28
 auSearchJLItems["法纹布"] = 100
 auSearchJLItems["食谱：美味风蛇"] = 30
-auSearchJLItems["冰霜巨龙合剂"] = 7.8
-auSearchJLItems["无尽怒气合剂"] = 7
+auSearchJLItems["冰霜巨龙合剂"] = 7.5
+auSearchJLItems["无尽怒气合剂"] = 6
 
 auSearchJLItems["月影布"] = 1
-auSearchJLItems["速度药水"] = 3
-auSearchJLItems["狂野魔法药水"] = 4
+auSearchJLItems["速度药水"] = 2.5
+auSearchJLItems["狂野魔法药水"] = 2.5
 auSearchJLItems["乌纹布"] =1
 auSearchJLItems["海妖之泪"] = 1
 
