@@ -91,9 +91,14 @@ end
 
 
 local auSearchJLItems ={}
+
+
+auSearchJLItems["毛料"] = 0.024
+auSearchJLItems["亚麻布"] = 0.001
+
 auSearchJLItems["梦叶草"] = 0.2
 auSearchJLItems["巫妖花"] = 1.2
-auSearchJLItems["蛇信草"] = 0.95 
+auSearchJLItems["蛇信草"] = 0.95
 auSearchJLItems["冰棘草"] = 0.9
 auSearchJLItems["卷丹"] = 0.4
 
@@ -128,22 +133,22 @@ auSearchJLItems["秘银矿"] = 3.1
 auSearchJLItems["银锭"] = 3.4
 auSearchJLItems["瑟银矿石"] = 0.5
 auSearchJLItems["瑟银锭"] = 0.6
-auSearchJLItems["青铜锭"] =0.99
+auSearchJLItems["青铜锭"] =0.9
 auSearchJLItems["大猫眼石"] = 1.2
 
 auSearchJLItems["铁锭"] = 1.1
 auSearchJLItems["铁矿石"] = 1.1
 auSearchJLItems["锡矿石"] = 0.9
 auSearchJLItems["锡锭"] = 1
-auSearchJLItems["次级月亮石"] =2
+auSearchJLItems["次级月亮石"] =1.8
 auSearchJLItems["铜矿石"] = 0.5
 auSearchJLItems["铜锭"] = 0.5
 
 auSearchJLItems["金矿石"] = 0.4
 auSearchJLItems["沉重的石头"] = 0.6
 auSearchJLItems["萨隆邪铁矿石"] = 0.5
-auSearchJLItems["银矿石"] = 3.2
-auSearchJLItems["坚固的石头"] = 0.28
+auSearchJLItems["银矿石"] = 3.1
+auSearchJLItems["坚固的石头"] = 0.25
 auSearchJLItems["魔铁矿石"] = 3.8
 auSearchJLItems["魔铁锭"] = 7.8
 

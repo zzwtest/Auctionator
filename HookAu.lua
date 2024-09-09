@@ -352,17 +352,26 @@ function GAUTickerJIANLOU_TSM()
             local auctionInfo = { GetAuctionItemInfo("list", index) }
             local itemname = auctionInfo[1]
             local stackPrice = auctionInfo[Auctionator.Constants.AuctionItemInfo.Buyout]
+            local _itemid = auctionInfo[Auctionator.Constants.AuctionItemInfo.ItemID]
             local count = auctionInfo[Auctionator.Constants.AuctionItemInfo.Quantity]
+            local _level = auctionInfo[Auctionator.Constants.AuctionItemInfo.Level]
             local seller = auctionInfo[Auctionator.Constants.AuctionItemInfo.Owner]
             local avgGold = stackPrice/count/10000
             local SaleStatus = auctionInfo[Auctionator.Constants.AuctionItemInfo.SaleStatus]
             local itemLink = GetAuctionItemLink("list", index)
             local res = auSearchJLItems[itemname]
+            local _, _, _, _, _, _, _, _, _, _, _sellPrice = GetItemInfo(_itemid)
+            local _sellGold = _sellPrice/10000
+            --print(itemname, avgGold,_sellGold,(_sellGold - avgGold)/avgGold)
             if res then
                 if avgGold>0 and avgGold <= res and SaleStatus == 0   then
                     -- 抢  
                     ns.HookAu.LogWarn("购买-预备",index,seller,itemLink,stackPrice,count,avgGold)
-                    table.insert(waitBuyList,{index,seller,itemLink,stackPrice,count,avgGold})
+                    table.insert(waitBuyList,{index,seller,itemLink,stackPrice,count,avgGold}) 
+                elseif avgGold > 0 and (_sellGold - avgGold)/avgGold>0.05 then
+                    ns.HookAu.LogWarn("购买-卖商店",index,seller,itemLink,stackPrice,count,avgGold,_sellGold)
+                    table.insert(waitBuyList,{index,seller,itemLink,stackPrice,count,avgGold}) 
+                --elseif _level>=80 and  then
                 else
                     --print(GetServerTime(),"不抢",index,seller,itemname,avgGold,count)
                 end
@@ -411,7 +420,7 @@ function GAUTickerJIANLOU_TSM()
         SortAuctionClearSort("list")
         QueryAuctionItems( nil , nil, nil , _tsm_pages , nil, nil, false, false, nil ) 
         
-        if auJLLoopCount % 20 == 0 then
+        if auJLLoopCount % 100 == 0 then
             ns.HookAu.LogInfo(_tsm_pages,_tsm_total_au_items)
             ns.HookAu.LogInfo("搜索中...搜索次数:" ,auJLLoopCount )
         end
