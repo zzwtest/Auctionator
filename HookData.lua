@@ -64,7 +64,7 @@ end
 -- 联盟 出售
 local auSellItemsHorde ={
     -- 物品名, 单价(gold), 最大单价 ,单组最大数量，首页我占有最小数量 
-    {"奥杜尔的圣物",0.14 , 0.48  , 40,3},
+    {"护甲羊皮纸 III",2.88 , 3.5  , 4,3},
     --  {"奥法之尘",1.9,   5  ,  8, 3},
  
 }
@@ -72,7 +72,7 @@ local auSellItemsHorde ={
 -- 部落 出售
 local auSellItemsAlliance ={
     -- 物品名, 单价(gold), 最大单价 ,单组最大数量，首页我占有最小数量 
-     {"无限之尘",1.32,   5  ,  10, 3},
+     {"实心炸药",1.10,   5  ,  5, 3},
     -- {"青铜锭",0.88, 5,20  , 30},
     -- {"青铜锭",0.88, 5,20  , 30},
     -- {"铜锭",0.54, 5,10  , 3},
@@ -149,8 +149,8 @@ auSearchJLItems["沉重的石头"] = 0.6
 auSearchJLItems["萨隆邪铁矿石"] = 0.5
 auSearchJLItems["银矿石"] = 3.1
 auSearchJLItems["坚固的石头"] = 0.25
-auSearchJLItems["魔铁矿石"] = 3.8
-auSearchJLItems["魔铁锭"] = 7.8
+auSearchJLItems["魔铁矿石"] = 3.2
+auSearchJLItems["魔铁锭"] = 7.5
 
 
 
