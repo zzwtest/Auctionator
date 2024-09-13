@@ -72,7 +72,9 @@ local auSellItemsHorde ={
 -- 部落 出售
 local auSellItemsAlliance ={
     -- 物品名, 单价(gold), 最大单价 ,单组最大数量，首页我占有最小数量 
-     {"无限之尘",1.32,   5  ,  10, 3},
+     {"实心炸药",1.11,   5  ,  5, 3},
+     {"毛料",0.6,   5  ,  10, 3},
+
     -- {"青铜锭",0.88, 5,20  , 30},
     -- {"青铜锭",0.88, 5,20  , 30},
     -- {"铜锭",0.54, 5,10  , 3},
@@ -91,6 +93,19 @@ end
 
 
 local auSearchJLItems ={}
+
+
+auSearchJLItems["附魔披风 - 超强敏捷"] = 11
+auSearchJLItems["附魔靴子 - 强效精神"] = 11
+auSearchJLItems["附魔盾牌 - 躲闪"] = 11
+auSearchJLItems["附魔护腕 - 特效耐力"] = 11 
+auSearchJLItems["附魔法杖 - 法术能量"] = 11
+auSearchJLItems["附魔胸甲 - 优异韧性"] = 11
+auSearchJLItems["附魔护腕 - 强效法术能量"] = 11 
+auSearchJLItems["附魔护腕 - 强效法术能量"] = 11
+
+auSearchJLItems["闪光魔线"] = 5
+
 
 
 auSearchJLItems["毛料"] = 0.024
@@ -116,7 +131,7 @@ auSearchJLItems["新鲜的刺须鲶鱼"] = 0.2
 -- auSearchJLItems["铲齿鹿肋排"] = 0.6
 -- auSearchJLItems["蚌肉"] = 0.6
 -- auSearchJLItems["猛犸肉"] =0.2
-auSearchJLItems["北地香料"] =1
+-- auSearchJLItems["北地香料"] =1
 -- auSearchJLItems["蚌肉"] = 0.6
 -- auSearchJLItems["龙鳞天使鱼"] = 0.6
 -- auSearchJLItems["小型亚口鱼"] = 0.1
@@ -148,7 +163,7 @@ auSearchJLItems["金矿石"] = 0.4
 auSearchJLItems["沉重的石头"] = 0.6
 auSearchJLItems["萨隆邪铁矿石"] = 0.5
 auSearchJLItems["银矿石"] = 3.1
-auSearchJLItems["坚固的石头"] = 0.25
+auSearchJLItems["坚固的石头"] = 0.2
 auSearchJLItems["魔铁矿石"] = 3.8
 auSearchJLItems["魔铁锭"] = 7.8
 
