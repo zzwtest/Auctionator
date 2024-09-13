@@ -110,10 +110,10 @@ auSearchJLItems["毛料"] = 0.024
 auSearchJLItems["亚麻布"] = 0.001
 
 auSearchJLItems["梦叶草"] = 0.2
-auSearchJLItems["巫妖花"] = 1.2
-auSearchJLItems["蛇信草"] = 0.95
+auSearchJLItems["巫妖花"] = 1.1
+auSearchJLItems["蛇信草"] = 0.9
 auSearchJLItems["冰棘草"] = 0.9
-auSearchJLItems["卷丹"] = 0.4
+auSearchJLItems["卷丹"] = 0.35
 
 auSearchJLItems["无限之尘"] = 1
 auSearchJLItems["奥法之尘"] = 0.78
