@@ -72,10 +72,12 @@ local auSellItemsHorde ={
 -- 部落 出售
 local auSellItemsAlliance ={
     -- 物品名, 单价(gold), 最大单价 ,单组最大数量，首页我占有最小数量 
-     {"实心炸药",1.10,   5  ,  5, 3},
+     {"实心炸药",1.10,   2  ,  5, 3},
+     {"毛料",0.59,   2  ,  10, 3},
+
     -- {"青铜锭",0.88, 5,20  , 30},
     -- {"青铜锭",0.88, 5,20  , 30},
-    -- {"铜锭",0.54, 5,10  , 3},
+     {"铜锭",0.9, 3,10  , 3},
     -- {"沉重的石头",1.24, 5,10  , 3},
  
     -- {"奥杜尔的圣物",0.25 , 0.48  , 40,3},
@@ -137,20 +139,20 @@ auSearchJLItems["青铜锭"] =0.9
 auSearchJLItems["大猫眼石"] = 1.2
 
 auSearchJLItems["铁锭"] = 1.1
-auSearchJLItems["铁矿石"] = 1.1
-auSearchJLItems["锡矿石"] = 0.9
-auSearchJLItems["锡锭"] = 1
-auSearchJLItems["次级月亮石"] =1.8
-auSearchJLItems["铜矿石"] = 0.5
-auSearchJLItems["铜锭"] = 0.5
+auSearchJLItems["铁矿石"] = 1
+auSearchJLItems["锡矿石"] = 0.7
+auSearchJLItems["锡锭"] = 0.75
+auSearchJLItems["次级月亮石"] =1.2
+auSearchJLItems["铜矿石"] = 0.4
+auSearchJLItems["铜锭"] = 0.45
 
 auSearchJLItems["金矿石"] = 0.4
 auSearchJLItems["沉重的石头"] = 0.6
 auSearchJLItems["萨隆邪铁矿石"] = 0.5
-auSearchJLItems["银矿石"] = 3.1
-auSearchJLItems["坚固的石头"] = 0.25
+auSearchJLItems["银矿石"] = 3
+auSearchJLItems["坚固的石头"] = 0.21
 auSearchJLItems["魔铁矿石"] = 3.2
-auSearchJLItems["魔铁锭"] = 7.5
+auSearchJLItems["魔铁锭"] = 7.1
 
 
 

@@ -367,7 +367,7 @@ function GAUTickerJIANLOU_TSM()
                 if avgGold>0 and avgGold <= res and SaleStatus == 0   then
                     -- 抢  
                     ns.HookAu.LogWarn("购买-预备",index,seller,itemLink,stackPrice,count,avgGold)
-                    table.insert(waitBuyList,{index,seller,itemLink,stackPrice,count,avgGold}) 
+                    table.insert(waitBuyList,{index,seller,itemLink,stackPrice,count,avgGold})                 
                 elseif avgGold > 0 and (_sellGold - avgGold)/avgGold>0.05 then
                     ns.HookAu.LogWarn("购买-卖商店",index,seller,itemLink,stackPrice,count,avgGold,_sellGold)
                     table.insert(waitBuyList,{index,seller,itemLink,stackPrice,count,avgGold}) 
@@ -375,6 +375,10 @@ function GAUTickerJIANLOU_TSM()
                 else
                     --print(GetServerTime(),"不抢",index,seller,itemname,avgGold,count)
                 end
+            
+            -- elseif seller == "Wwssw" then
+            --     ns.HookAu.LogWarn("购买-指定小号",index,seller,itemLink,stackPrice,count,avgGold)
+            --     table.insert(waitBuyList,{index,seller,itemLink,stackPrice,count,avgGold})  
             end
 
             --print(GetServerTime(),itemLink,stackPrice,count,)
@@ -713,6 +717,7 @@ local function auSearchItemOnSell(index)
 
         -- 获取背包 
         local bagID ,slot, slotinfo = auGetItemSlotByName(_itemname)
+        --print(bagID ,slot, slotinfo)
         if  bagID and slot and slotinfo then
             local _count = slotinfo.stackCount
             if  _count>_max then
