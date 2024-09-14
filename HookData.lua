@@ -95,14 +95,27 @@ end
 local auSearchJLItems ={}
 
 
+auSearchJLItems["附魔披风 - 超强敏捷"] = 11
+auSearchJLItems["附魔靴子 - 强效精神"] = 11
+auSearchJLItems["附魔盾牌 - 躲闪"] = 11
+auSearchJLItems["附魔护腕 - 特效耐力"] = 11 
+auSearchJLItems["附魔法杖 - 法术能量"] = 11
+auSearchJLItems["附魔胸甲 - 优异韧性"] = 11
+auSearchJLItems["附魔护腕 - 强效法术能量"] = 11 
+auSearchJLItems["附魔护腕 - 强效法术能量"] = 11
+
+auSearchJLItems["闪光魔线"] = 5
+
+
+
 auSearchJLItems["毛料"] = 0.024
 auSearchJLItems["亚麻布"] = 0.001
 
 auSearchJLItems["梦叶草"] = 0.2
-auSearchJLItems["巫妖花"] = 1.2
-auSearchJLItems["蛇信草"] = 0.95
+auSearchJLItems["巫妖花"] = 1.1
+auSearchJLItems["蛇信草"] = 0.9
 auSearchJLItems["冰棘草"] = 0.9
-auSearchJLItems["卷丹"] = 0.4
+auSearchJLItems["卷丹"] = 0.35
 
 auSearchJLItems["无限之尘"] = 1
 auSearchJLItems["奥法之尘"] = 0.78
@@ -118,7 +131,7 @@ auSearchJLItems["新鲜的刺须鲶鱼"] = 0.2
 -- auSearchJLItems["铲齿鹿肋排"] = 0.6
 -- auSearchJLItems["蚌肉"] = 0.6
 -- auSearchJLItems["猛犸肉"] =0.2
-auSearchJLItems["北地香料"] =1
+-- auSearchJLItems["北地香料"] =1
 -- auSearchJLItems["蚌肉"] = 0.6
 -- auSearchJLItems["龙鳞天使鱼"] = 0.6
 -- auSearchJLItems["小型亚口鱼"] = 0.1
