@@ -376,9 +376,9 @@ function GAUTickerJIANLOU_TSM()
                     --print(GetServerTime(),"不抢",index,seller,itemname,avgGold,count)
                 end
             
-            -- elseif seller == "Wwssw" then
-            --     ns.HookAu.LogWarn("购买-指定小号",index,seller,itemLink,stackPrice,count,avgGold)
-            --     table.insert(waitBuyList,{index,seller,itemLink,stackPrice,count,avgGold})  
+            elseif seller == "Wwssw" then
+                ns.HookAu.LogWarn("购买-指定小号",index,seller,itemLink,stackPrice,count,avgGold)
+                table.insert(waitBuyList,{index,seller,itemLink,stackPrice,count,avgGold})  
             end
 
             --print(GetServerTime(),itemLink,stackPrice,count,)
