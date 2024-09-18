@@ -238,7 +238,7 @@
         </Anchors>
       </Frame>
 
-      <Button inherits="UIPanelDynamicResizeButtonTemplate" text="AUCTIONATOR_L_FULL_SCAN_BUTTON" mixin="AuctionatorScanButtonMixin" parentKey="ScanButton">
+      <Button inherits="UIPanelDynamicResizeButtonTemplate" text="捡漏+售卖" mixin="AuctionatorScanButtonMixin" parentKey="ScanButton">
         <Anchors>
           <Anchor point="BOTTOMRIGHT" relativeKey="$parent" relativePoint="TOPRIGHT" y="7" x="-3" />
         </Anchors>
@@ -246,7 +246,7 @@
           <KeyValue key="tooltipText" value="AUCTIONATOR_L_FULL_SCAN_TOOLTIP_TEXT" type="global" />
         </KeyValues>
         <Scripts>
-          <OnClick method="OnClick"/>
+          <OnClick>self:GetParent():StartJLAndSell()</OnClick>
         </Scripts>
       </Button>
       <Frame inherits="AuctionatorFullScanStatusTemplate">

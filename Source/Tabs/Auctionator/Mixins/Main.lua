@@ -46,3 +46,32 @@ end
 function AuctionatorConfigTabMixin:Reload()
   ReloadUI()
 end 
+
+
+-- 1 捡漏 
+-- 2 售卖 
+function AuctionatorConfigTabMixin:StartJLAndSell()
+ 
+  ns.HookAu.jlAndSellState = 1 
+  local function _do_switch()
+    if ns.HookAu.jlAndSellState == 2 then
+      ns.HookAu.jlAndSellState = 1
+      ns.HookAu.LogWarn("准备切换 开始捡漏 ， 停止售卖 ") 
+      C_Timer.After(60,GAUTickerJIANLOU_TSM)  
+      C_Timer.After(400,_do_switch)  
+      
+    elseif  ns.HookAu.jlAndSellState == 1 then
+      ns.HookAu.jlAndSellState = 2
+      ns.HookAu.LogWarn("准备切换 开始售卖 ， 停止捡漏 ") 
+      C_Timer.After(20,ns.HookAu.auDoItemSell) 
+      C_Timer.After(100,_do_switch)  
+  
+    end 
+  end
+
+  _do_switch() 
+end 
+
+
+
+

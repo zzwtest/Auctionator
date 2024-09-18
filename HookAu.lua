@@ -238,7 +238,7 @@ local function GAUTicker()
         auProcessItemFunc(1)
     else
         -- 暂时无法搜索 
-        ns.HookAu.LogError("搜索按钮不可用 稍后重试。。")
+        -- ns.HookAu.LogError("搜索按钮不可用 稍后重试。。")
         C_Timer.After(3, GAUTicker)
     end
 
@@ -286,9 +286,19 @@ local getNextFilters = createCategoryFilterIterator()
 -- /run SortAuctionSetSort("list", 'seller', false);SortAuctionSetSort("list", 'quantity', false);SortAuctionSetSort("list", 'unitprice', false);
 -- /run SortAuctionApplySort("list")
 local _tsm_total_au_items  = 0 
-local _tsm_pages = 0 
+local _tsm_pages = 0
 
-function GAUTickerJIANLOU_TSM()
+-- 1 捡漏 
+-- 2 售卖 
+ns.HookAu.jlAndSellState = 0 
+
+function GAUTickerJIANLOU_TSM() 
+    if ns.HookAu.jlAndSellState == 2  then 
+        ns.HookAu.LogWarn(" GAUTickerJIANLOU_TSM 开始售卖 ， 停止捡漏  ") 
+        -- return C_Timer.After(30, GAUTickerJIANLOU_TSM)
+        return 
+    end
+
     if not jlEventFrame then 
         jlEventFrame = CreateFrame("Frame", "MyaujlEventFrame")
         jlEventFrame:RegisterEvent("UI_ERROR_MESSAGE")
@@ -376,7 +386,7 @@ function GAUTickerJIANLOU_TSM()
                     --print(GetServerTime(),"不抢",index,seller,itemname,avgGold,count)
                 end
             
-            elseif seller == "Wwssw" then
+            elseif seller == "Wwssw" or seller == "老猎手二号" then
                 ns.HookAu.LogWarn("购买-指定小号",index,seller,itemLink,stackPrice,count,avgGold)
                 table.insert(waitBuyList,{index,seller,itemLink,stackPrice,count,avgGold})  
             end
@@ -432,7 +442,7 @@ function GAUTickerJIANLOU_TSM()
  
     else
         -- 暂时无法搜索 
-        ns.HookAu.LogError("搜索按钮不可用 稍后重试。。")
+        -- ns.HookAu.LogError("搜索按钮不可用 稍后重试。。")
         C_Timer.After(2, GAUTickerJIANLOU_TSM)
     end
 
@@ -626,7 +636,6 @@ local  function do_next_au_seller(index)
 end
 
 
-
 local function auGetItemSlotByName(itemName)
     for bagID = 0, 4 do
         -- 获取当前背包的物品槽数量
@@ -640,12 +649,11 @@ local function auGetItemSlotByName(itemName)
                 -- 输出物品信息
                 -- print(bagID,slot,slotinfo.itemID,slotinfo.itemName) 
                 if slotinfo.itemName == itemName then
-                    -- C_Container.PickupContainerItem(bagID, slot)
-                    -- C_Timer.After(3, function ()
-                    --     ClickAuctionSellItemButton()
-                    -- end)
                     return bagID ,slot, slotinfo
                 end
+                -- if string.sub(itemName,1,1) == "^" and string.match(slotinfo.itemName, itemName)   then
+                --     return bagID ,slot, slotinfo
+                -- end
             end
         end
     end
@@ -653,7 +661,14 @@ local function auGetItemSlotByName(itemName)
 end
 
 local _noneSlotIndex = {}
-local function auSearchItemOnSell(index)
+local function auSearchItemOnSell(index) 
+    if ns.HookAu.jlAndSellState == 1  then 
+        ns.HookAu.LogWarn("auSearchItemOnSell 开始捡漏 ， 停止售卖 ") 
+        --return C_Timer.After(30, auDoItemSell)
+        return 
+    end
+
+
     if  _noneSlotIndex[index] then
         return auSearchItemOnSell(index+1)
     end 
@@ -667,6 +682,7 @@ local function auSearchItemOnSell(index)
     ns.HookAu.LogDebug(_item,index)
     -- _firstMinZhanbi 在搜索第一页我的商品组数
     local _itemname, _goldavg , _goldmax , _max, _firstMinZhanbi = unpack(_item)
+    
     local _myCount = 0 -- 我的商品数量
     local function auAUDoSellItems()
         -- 遍历统计物品 
@@ -689,7 +705,7 @@ local function auSearchItemOnSell(index)
             local SaleStatus = auctionInfo[Auctionator.Constants.AuctionItemInfo.SaleStatus]
             _totalGold = _totalGold + stackPrice/10000
 
-            if _myName == seller and index < 15 then
+            if _myName == seller and index < 5 then
                 -- 前15里面有自己
                 _myCount = _myCount + 1 
                 _myHasSell = true 
@@ -700,6 +716,11 @@ local function auSearchItemOnSell(index)
             _total = _total + count
             table.insert(_avgList,avgGold)
         end
+        print(_itemname,_totalGold,_total) 
+        if   _total == 0  then 
+            _total = 1 
+            table.insert(_avgList,1000000)
+        end 
         local _curGoldAvg = _totalGold/_total
         local _priceGold = ns.HookAu.calculateSalePrice(_avgList)
         if _priceGold < _goldavg then 
@@ -761,8 +782,46 @@ local function auSearchItemOnSell(index)
     QueryAuctionItems(_itemname, nil, nil , 0, nil, nil, false, true, nil)
     C_Timer.After(3, auAUDoSellItems)
 end
+local _sellInit = false 
+local function initItemSellConf()
+    if _sellInit then
+        return 
+    end
+    _sellInit = true 
+    local _itemDolist = {}
+    for i = 1 , #ns.HookAu.auSellItemsRegex do
+        --print(auSellItems[i])
+        local _item = ns.HookAu.auSellItemsRegex[i]
+        local   _itemname, _goldavg , _goldmax , _max, _firstMinZhanbi = unpack(_item)
+           
+        for bagID = 0, 4 do
+            -- 获取当前背包的物品槽数量
+            local numSlots = C_Container.GetContainerNumSlots(bagID)
+            -- 遍历当前背包的所有物品槽
+            for slot = 1, numSlots do
+                -- 获取物品槽的信息
+                local slotinfo = C_Container.GetContainerItemInfo(bagID, slot)
+                -- 如果物品槽不为空
+                if slotinfo then
+                    if not _itemDolist[slotinfo.itemName]  and   string.sub(_itemname,1,1) == "^" and string.match(slotinfo.itemName, _itemname)   then
+                        local _t = {slotinfo.itemName, _goldavg , _goldmax , _max, _firstMinZhanbi }
+                        table.insert(auSellItems,_t)
+                        _itemDolist[slotinfo.itemName] = true 
+                    end
+                end
+            end
+        end
+    end 
+end
 
-local  function auDoItemSell()
+local function auDoItemSell()
+    if ns.HookAu.jlAndSellState == 1  then 
+        ns.HookAu.LogWarn("auDoItemSell 开始捡漏 ， 停止售卖 ") 
+        --return C_Timer.After(30, auDoItemSell)
+        return 
+    end
+
+    initItemSellConf()
     local canQuery,canQueryAll = CanSendAuctionQuery()
     if canQueryAll then
         SortAuctionSetSort("list", "unitprice")
