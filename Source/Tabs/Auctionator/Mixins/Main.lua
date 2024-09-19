@@ -53,7 +53,8 @@ end
 function AuctionatorConfigTabMixin:StartJLAndSell()
  
   ns.HookAu.jlAndSellState = 1 
-  local function _do_switch()
+  local function _do_switch() 
+    ns.HookAu.LogWarn("ns.HookAu.auNoneSlotIndex ",#ns.HookAu.auNoneSlotIndex , " ns.HookAu.auSellItems", #ns.HookAu.auSellItems) 
     if ns.HookAu.jlAndSellState == 2 then
       ns.HookAu.jlAndSellState = 1
       ns.HookAu.LogWarn("准备切换 开始捡漏 ， 停止售卖 ") 

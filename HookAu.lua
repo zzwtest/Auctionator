@@ -620,8 +620,45 @@ end)
 -------------------------------------------
 ------ 出售 
 
-
+local _noneSlotIndex = {}
+ns.HookAu.auNoneSlotIndex = _noneSlotIndex 
 local auSellItems = ns.HookAu.auSellItems
+
+
+local _sellInit = false 
+local function initItemSellConf()
+    if _sellInit then
+        return 
+    end
+    _sellInit = true 
+    local _itemDolist = {}
+    for i = 1 , #ns.HookAu.auSellItemsRegex do
+        --print(auSellItems[i])
+        local _item = ns.HookAu.auSellItemsRegex[i]
+        local   _itemname, _goldavg , _goldmax , _max, _firstMinZhanbi = unpack(_item)
+           
+        for bagID = 0, 4 do
+            -- 获取当前背包的物品槽数量
+            local numSlots = C_Container.GetContainerNumSlots(bagID)
+            -- 遍历当前背包的所有物品槽
+            for slot = 1, numSlots do
+                -- 获取物品槽的信息
+                local slotinfo = C_Container.GetContainerItemInfo(bagID, slot)
+                -- 如果物品槽不为空
+                if slotinfo then
+                    if not _itemDolist[slotinfo.itemName]  and   string.sub(_itemname,1,1) == "^" and string.match(slotinfo.itemName, _itemname)   then
+                        local _t = {slotinfo.itemName, _goldavg , _goldmax , _max, _firstMinZhanbi }
+                        table.insert(auSellItems,_t)
+                        _itemDolist[slotinfo.itemName] = true 
+                    end
+                end
+            end
+        end
+    end 
+end
+
+
+
 
 local  function do_next_au_seller(index)
     if index > #auSellItems then
@@ -660,7 +697,8 @@ local function auGetItemSlotByName(itemName)
     return nil , nil ,nil
 end
 
-local _noneSlotIndex = {}
+
+
 local function auSearchItemOnSell(index) 
     if ns.HookAu.jlAndSellState == 1  then 
         ns.HookAu.LogWarn("auSearchItemOnSell 开始捡漏 ， 停止售卖 ") 
@@ -782,46 +820,23 @@ local function auSearchItemOnSell(index)
     QueryAuctionItems(_itemname, nil, nil , 0, nil, nil, false, true, nil)
     C_Timer.After(3, auAUDoSellItems)
 end
-local _sellInit = false 
-local function initItemSellConf()
-    if _sellInit then
-        return 
-    end
-    _sellInit = true 
-    local _itemDolist = {}
-    for i = 1 , #ns.HookAu.auSellItemsRegex do
-        --print(auSellItems[i])
-        local _item = ns.HookAu.auSellItemsRegex[i]
-        local   _itemname, _goldavg , _goldmax , _max, _firstMinZhanbi = unpack(_item)
-           
-        for bagID = 0, 4 do
-            -- 获取当前背包的物品槽数量
-            local numSlots = C_Container.GetContainerNumSlots(bagID)
-            -- 遍历当前背包的所有物品槽
-            for slot = 1, numSlots do
-                -- 获取物品槽的信息
-                local slotinfo = C_Container.GetContainerItemInfo(bagID, slot)
-                -- 如果物品槽不为空
-                if slotinfo then
-                    if not _itemDolist[slotinfo.itemName]  and   string.sub(_itemname,1,1) == "^" and string.match(slotinfo.itemName, _itemname)   then
-                        local _t = {slotinfo.itemName, _goldavg , _goldmax , _max, _firstMinZhanbi }
-                        table.insert(auSellItems,_t)
-                        _itemDolist[slotinfo.itemName] = true 
-                    end
-                end
-            end
-        end
-    end 
-end
 
-local function auDoItemSell()
+
+
+local function auDoItemSell() 
+
+    initItemSellConf()
+    ns.HookAu.auSellItems = auSellItems
+
+
+
     if ns.HookAu.jlAndSellState == 1  then 
         ns.HookAu.LogWarn("auDoItemSell 开始捡漏 ， 停止售卖 ") 
         --return C_Timer.After(30, auDoItemSell)
         return 
     end
 
-    initItemSellConf()
+    
     local canQuery,canQueryAll = CanSendAuctionQuery()
     if canQueryAll then
         SortAuctionSetSort("list", "unitprice")
