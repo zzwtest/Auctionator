@@ -54,18 +54,21 @@ function AuctionatorConfigTabMixin:StartJLAndSell()
  
   ns.HookAu.jlAndSellState = 1 
   local function _do_switch() 
-    ns.HookAu.LogWarn("ns.HookAu.auNoneSlotIndex ",#ns.HookAu.auNoneSlotIndex , " ns.HookAu.auSellItems", #ns.HookAu.auSellItems) 
+    ns.HookAu.LogWarn("ns.HookAu.auNoneSlotIndex ",#ns.HookAu.auNoneSlotIndex , " ns.HookAu.auSellItems", #ns.HookAu.auSellItems)  
+    local wait_sell_time = (#ns.HookAu.auSellItems - #ns.HookAu.auNoneSlotIndex) * 15
+    if wait_sell_time <= 0 then wait_sell_time = 1 end 
+    ns.HookAu.LogWarn("wait_sell_time ",wait_sell_time)
     if ns.HookAu.jlAndSellState == 2 then
       ns.HookAu.jlAndSellState = 1
       ns.HookAu.LogWarn("准备切换 开始捡漏 ， 停止售卖 ") 
-      C_Timer.After(60,GAUTickerJIANLOU_TSM)  
+      C_Timer.After(30,GAUTickerJIANLOU_TSM)  
       C_Timer.After(400,_do_switch)  
       
     elseif  ns.HookAu.jlAndSellState == 1 then
       ns.HookAu.jlAndSellState = 2
       ns.HookAu.LogWarn("准备切换 开始售卖 ， 停止捡漏 ") 
-      C_Timer.After(20,ns.HookAu.auDoItemSell) 
-      C_Timer.After(100,_do_switch)  
+      C_Timer.After(10,ns.HookAu.auDoItemSell) 
+      C_Timer.After(wait_sell_time,_do_switch)  
   
     end 
   end

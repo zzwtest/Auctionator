@@ -326,7 +326,7 @@ function GAUTickerJIANLOU_TSM()
     canQuery,canQueryAll = CanSendAuctionQuery()
     -- print( GetServerTime(), "auTicker  canQuery:", canQuery,ns.HookAu.auDoItemsing,"auOpend",ns.HookAu.auOpend)  
     local waitBuyList = {}
-    _doBuy = function ()
+    _doBuy = function () 
         ns.HookAu.auDoItemsing = true 
         if #waitBuyList == 0 then 
             ns.HookAu.auDoItemsing = false 
@@ -353,6 +353,13 @@ function GAUTickerJIANLOU_TSM()
         end)
     end
      _doJL = function () 
+
+        if ns.HookAu.jlAndSellState == 2  then 
+            ns.HookAu.LogWarn(" GAUTickerJIANLOU_TSM - _doJL 开始售卖 ， 停止捡漏  ") 
+            -- return C_Timer.After(30, GAUTickerJIANLOU_TSM)
+            return 
+        end
+        
         -- 这里需要重置 buylist 
         waitBuyList = {}
         local __batchcount, __total  = GetNumAuctionItems("list") 
@@ -743,7 +750,7 @@ local function auSearchItemOnSell(index)
             local SaleStatus = auctionInfo[Auctionator.Constants.AuctionItemInfo.SaleStatus]
             _totalGold = _totalGold + stackPrice/10000
 
-            if _myName == seller and index < 5 then
+            if _myName == seller and index < 2 then
                 -- 前15里面有自己
                 _myCount = _myCount + 1 
                 _myHasSell = true 

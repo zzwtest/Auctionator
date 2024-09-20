@@ -158,7 +158,7 @@ auSearchJLItems["源生之土"] = 1
 auSearchJLItems["艾泽拉斯钻石"] =2 
 
 auSearchJLItems["秘银锭"] = 3.1
-auSearchJLItems["秘银矿"] = 3.1
+auSearchJLItems["秘银矿石"] = 3.0
 auSearchJLItems["银锭"] = 3.4
 auSearchJLItems["瑟银矿石"] = 0.5
 auSearchJLItems["瑟银锭"] = 0.6
