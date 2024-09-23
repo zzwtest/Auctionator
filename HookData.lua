@@ -63,22 +63,23 @@ end
 
 -- 联盟 出售
 local auSellItemsHorde ={
-    -- 物品名, 单价(gold), 最大单价 ,单组最大数量，首页我占有最小数量 
+    -- 物品名, 单价(gold), 最大单价 ,单组最大数量，首页我占有最小数量 , 检查数量 前X个 
    -- {"护甲羊皮纸 III",2.88 , 3.5  , 4,3},
     --  {"奥法之尘",1.9,   5  ,  8, 3},
-     {"奥杜尔的圣物",0.06 , 0.12  , 10,3},
-
+     --{"奥杜尔的圣物",0.06 , 0.12  , 10,3},
+    {"秘银锭", 3.6, 4.9, 8  , 2,6 },
+    {"青铜锭", 1.5, 2.2, 12  , 2,6 },
 }
 
 -- 部落 出售
 local auSellItemsAlliance ={
-    -- 物品名, 单价(gold), 最大单价 ,单组最大数量，首页我占有最小数量 
+    -- 物品名, 单价(gold), 最大单价 ,单组最大数量，首页我占有最小数量 , 检查数量 前X个 
     -- {"实心炸药",0.6,   2  ,  5, 3},
     --  {"食谱：烟熏鲈鱼",4, 11, 1  , 2},
   --   {"沉重的石头",1.24, 5,10  , 3},
-
-   {"图样：灵纹外套",16, 25,10  , 1},
-
+   {"源生生命", 7, 11, 1  , 1,2},
+   {"图样：灵纹外套",16, 25,1  , 1,2},
+   {"巫妖花",3.3, 5, 12 , 2,6},
     --  {"毛料",0.59,   2  ,  10, 3},
     -- {"青铜锭",0.88, 5,20  , 30},
     -- {"青铜锭",0.88, 5,20  , 30},
@@ -88,7 +89,7 @@ local auSellItemsAlliance ={
 }
 
 ns.HookAu.auSellItemsRegex = {
-    {"^食谱",3, 11, 1  , 1},
+    {"^食谱",3, 11, 1  , 1,2},
 } 
 
 
@@ -115,13 +116,13 @@ auSearchJLItems["附魔护腕 - 强效法术能量"] = 11
 auSearchJLItems["闪光魔线"] = 5
 
 
-
+auSearchJLItems["丝绸"] = 0.009
 auSearchJLItems["毛料"] = 0.024
-auSearchJLItems["亚麻布"] = 0.001
+auSearchJLItems["亚麻布"] = 0.012
 auSearchJLItems["金苜蓿"] = 0.2
 
 auSearchJLItems["梦叶草"] = 0.2
-auSearchJLItems["巫妖花"] = 2.4
+auSearchJLItems["巫妖花"] = 2.6
 auSearchJLItems["蛇信草"] = 0.9
 auSearchJLItems["冰棘草"] = 0.9
 auSearchJLItems["卷丹"] = 0.35
@@ -148,17 +149,17 @@ auSearchJLItems["香辣猛犸小吃"] = 1
 auSearchJLItems["结构图：白色烟幕弹"] = 10
 
 
-auSearchJLItems["土之微粒"] = 0.23
-auSearchJLItems["生命微粒"] = 0.2 
-auSearchJLItems["火焰微粒"] = 1 
+--auSearchJLItems["土之微粒"] = 0.23
+auSearchJLItems["生命微粒"] = 0.1
+auSearchJLItems["火焰微粒"] = 1
 
 auSearchJLItems["源生之土"] = 1
 auSearchJLItems["欺诈宝珠"] =0.6
 auSearchJLItems["源生之土"] = 1
 auSearchJLItems["艾泽拉斯钻石"] =2 
 
-auSearchJLItems["秘银锭"] = 3.1
-auSearchJLItems["秘银矿石"] = 3.0
+auSearchJLItems["秘银锭"] = 3
+auSearchJLItems["秘银矿石"] = 3
 auSearchJLItems["银锭"] = 3.4
 auSearchJLItems["瑟银矿石"] = 0.5
 auSearchJLItems["瑟银锭"] = 0.6
@@ -178,11 +179,11 @@ auSearchJLItems["铜锭"] = 0.45
 
 auSearchJLItems["金矿石"] = 0.4
 auSearchJLItems["沉重的石头"] = 0.6
-auSearchJLItems["萨隆邪铁矿石"] = 0.6
+auSearchJLItems["萨隆邪铁矿石"] = 0.66
 auSearchJLItems["银矿石"] = 3
 auSearchJLItems["坚固的石头"] = 0.1
-auSearchJLItems["魔铁矿石"] = 3.2
-auSearchJLItems["魔铁锭"] = 7.1
+auSearchJLItems["魔铁矿石"] = 3
+auSearchJLItems["魔铁锭"] = 6.0
 
 
 

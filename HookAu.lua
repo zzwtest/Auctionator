@@ -311,11 +311,7 @@ function GAUTickerJIANLOU_TSM()
     if not ns.HookAu.auOpend then
         return
     end
-    if ns.HookAu.auDoItemsing then
-        ns.HookAu.LogError("物品处理中。。")
-        C_Timer.After(1.5, GAUTickerJIANLOU_TSM)
-        return 
-    end
+ 
     if not checkGold() then
         ns.HookAu.LogError("金币达到上限 终止扫货 ")
         return
@@ -327,9 +323,7 @@ function GAUTickerJIANLOU_TSM()
     -- print( GetServerTime(), "auTicker  canQuery:", canQuery,ns.HookAu.auDoItemsing,"auOpend",ns.HookAu.auOpend)  
     local waitBuyList = {}
     _doBuy = function () 
-        ns.HookAu.auDoItemsing = true 
         if #waitBuyList == 0 then 
-            ns.HookAu.auDoItemsing = false 
 
             ns.HookAu.LogError("_doBuy call GAUTickerJIANLOU_TSM " )
             C_Timer.After(0.5, function() GAUTickerJIANLOU_TSM()  end )
@@ -404,7 +398,6 @@ function GAUTickerJIANLOU_TSM()
         if #waitBuyList >= 1 then
             _doBuy()
         else
-            ns.HookAu.auDoItemsing = false
             C_Timer.After(1, GAUTickerJIANLOU_TSM)
         end
     end
@@ -436,7 +429,7 @@ function GAUTickerJIANLOU_TSM()
 
 
     --ns.HookAu.LogInfo(canQuery,ns.HookAu.auDoItemsing ,ns.HookAu.auOpend)
-    if canQuery and not ns.HookAu.auDoItemsing and ns.HookAu.auOpend then
+    if canQuery and   ns.HookAu.auOpend then
         -- SortAuctionSetSort("list", "unitprice")
         SortAuctionClearSort("list")
         QueryAuctionItems( nil , nil, nil , _tsm_pages , nil, nil, false, false, nil ) 
@@ -642,7 +635,7 @@ local function initItemSellConf()
     for i = 1 , #ns.HookAu.auSellItemsRegex do
         --print(auSellItems[i])
         local _item = ns.HookAu.auSellItemsRegex[i]
-        local   _itemname, _goldavg , _goldmax , _max, _firstMinZhanbi = unpack(_item)
+        local   _itemname, _goldavg , _goldmax , _max, _firstMinZhanbi ,_checkCount= unpack(_item)
            
         for bagID = 0, 4 do
             -- 获取当前背包的物品槽数量
@@ -654,7 +647,7 @@ local function initItemSellConf()
                 -- 如果物品槽不为空
                 if slotinfo then
                     if not _itemDolist[slotinfo.itemName]  and   string.sub(_itemname,1,1) == "^" and string.match(slotinfo.itemName, _itemname)   then
-                        local _t = {slotinfo.itemName, _goldavg , _goldmax , _max, _firstMinZhanbi }
+                        local _t = {slotinfo.itemName, _goldavg , _goldmax , _max, _firstMinZhanbi,_checkCount }
                         table.insert(auSellItems,_t)
                         _itemDolist[slotinfo.itemName] = true 
                     end
@@ -726,7 +719,7 @@ local function auSearchItemOnSell(index)
     local _item = auSellItems[index]
     ns.HookAu.LogDebug(_item,index)
     -- _firstMinZhanbi 在搜索第一页我的商品组数
-    local _itemname, _goldavg , _goldmax , _max, _firstMinZhanbi = unpack(_item)
+    local _itemname, _goldavg , _goldmax , _max, _firstMinZhanbi ,_checkCount= unpack(_item)
     
     local _myCount = 0 -- 我的商品数量
     local function auAUDoSellItems()
@@ -750,7 +743,7 @@ local function auSearchItemOnSell(index)
             local SaleStatus = auctionInfo[Auctionator.Constants.AuctionItemInfo.SaleStatus]
             _totalGold = _totalGold + stackPrice/10000
 
-            if _myName == seller and index < 2 then
+            if _myName == seller and index < _checkCount then
                 -- 前15里面有自己
                 _myCount = _myCount + 1 
                 _myHasSell = true 

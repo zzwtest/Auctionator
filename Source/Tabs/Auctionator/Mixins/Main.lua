@@ -32,6 +32,7 @@ function AuctionatorConfigTabMixin:StartAutoScan()
 end 
 
 function AuctionatorConfigTabMixin:StartAutoJianLou()
+  ns.HookAu.jlAndSellState = 1 
   GAUTickerJIANLOU_TSM()
 end 
 
