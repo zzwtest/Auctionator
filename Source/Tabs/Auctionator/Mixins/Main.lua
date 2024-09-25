@@ -49,6 +49,12 @@ function AuctionatorConfigTabMixin:Reload()
 end 
 
 
+function AuctionatorConfigTabMixin:AuctionatorauSearchYouDaoSellBuy()
+   
+  ns.HookAu.auSearchYouDaoSellBuy()
+end
+
+
 -- 1 捡漏 
 -- 2 售卖 
 function AuctionatorConfigTabMixin:StartJLAndSell()

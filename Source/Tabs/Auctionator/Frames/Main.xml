@@ -286,9 +286,18 @@
         </Scripts>
       </Button>
 
-      <Button inherits="UIPanelDynamicResizeButtonTemplate" text="Reload" parentKey="ReloadButton">
+      <Button inherits="UIPanelDynamicResizeButtonTemplate" text="引导售卖" parentKey="YDSellButton">
         <Anchors>
           <Anchor point="TOPRIGHT" relativeKey="$parent.SellButton" relativePoint="TOPLEFT" x="-3" />
+        </Anchors>
+        <Scripts>
+          <OnClick>self:GetParent():AuctionatorauSearchYouDaoSellBuy()</OnClick>
+        </Scripts>
+      </Button>
+
+      <Button inherits="UIPanelDynamicResizeButtonTemplate" text="Reload" parentKey="ReloadButton">
+        <Anchors>
+          <Anchor point="TOPRIGHT" relativeKey="$parent.YDSellButton" relativePoint="TOPLEFT" x="-3" />
         </Anchors>
         <Scripts>
           <OnClick>self:GetParent():Reload()</OnClick>
