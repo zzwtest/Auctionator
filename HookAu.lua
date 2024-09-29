@@ -769,7 +769,7 @@ local function auSearchItemOnSell(index)
                 _myHasSell = true 
             end
             if _minAvgGold>avgGold then
-                _minAvgGold = avgGold
+                _minAvgGold = avgGold 
             end
             _total = _total + count
             table.insert(_avgList,avgGold)
@@ -782,7 +782,10 @@ local function auSearchItemOnSell(index)
         local _curGoldAvg = _totalGold/_total
         local _priceGold = ns.HookAu.calculateSalePrice(_avgList)
         if _priceGold < _goldavg then 
-            _priceGold = _goldavg 
+            --_priceGold = _goldavg 
+            ns.HookAu.LogInfo("价格过低 ，忽略 ",_minAvgGold,avgGold)
+            return C_Timer.After(10, function() auSearchItemOnSell(index + 1) end)
+
         end 
         if _priceGold > _goldmax then 
             _priceGold = _goldmax
