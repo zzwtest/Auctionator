@@ -818,7 +818,7 @@ local function auSearchItemOnSell(index)
                             -- ns.ThreeDimensionsCode.Signal_001_CallBack = nil
                             -- 每次只能买一件 
                             ns.HookAu.LogInfo("上架",_itemname,math.floor(_priceGold*10000-1)*_count, math.floor(_priceGold*10000-1)*_count, 2, _count , 1)
-                            PostAuction(math.floor(_priceGold*10000-1)*_count, math.floor(_priceGold*10000-1)*_count, 2, _count , 1) 
+                            PostAuction(math.floor(_priceGold*10000-1)*_count, math.floor(_priceGold*10000-1)*_count, 1, _count , 1) 
                             C_Timer.After(3, function() auSearchItemOnSell(index + 1)  end)
                         end)
                     end) 
