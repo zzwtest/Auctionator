@@ -202,7 +202,7 @@ local function GAUTicker()
         ns.HookAu.LogInfo("处理",_currentIndex,_currentItem[1])
         QueryAuctionItems(_currentItem[1], nil, nil , 0, nil, nil, false, true, nil)
         --QueryAuctionItems( nil , nil, nil , 0, nil, nil, false, true, AuctionCategories[6].filters)
-        C_Timer.After(3, auAUDoItems)
+        C_Timer.After(2, auAUDoItems)
         -- 设置下一个项目的处理，延迟3秒
     end
 
@@ -657,7 +657,7 @@ local function auSearchYouDaoSellBuy(gindex)
                         ns.HookAu.LogInfo("等待键盘事件",_itemname,_priceGold)
                         Signal_001(function ()
                             ns.HookAu.LogInfo("上架",_itemname,  _goldyd , 1)
-                            PostAuction(math.floor(_goldyd*10000) , math.floor(_goldyd*10000) , 1 , 1 , 1)
+                            PostAuction(math.floor(_goldyd*10000) , math.floor(_goldyd*10000) , 1 , 1 , 1,true)
                             ns.HookAu.LogDebug("_doSell 启动新的一轮",gindex+1)
                             return C_Timer.After(2,function() auSearchYouDaoSellBuy(gindex+1) end )
                         end)
@@ -818,7 +818,7 @@ local function auSearchItemOnSell(index)
                             -- ns.ThreeDimensionsCode.Signal_001_CallBack = nil
                             -- 每次只能买一件 
                             ns.HookAu.LogInfo("上架",_itemname,math.floor(_priceGold*10000-1)*_count, math.floor(_priceGold*10000-1)*_count, 2, _count , 1)
-                            PostAuction(math.floor(_priceGold*10000-1)*_count, math.floor(_priceGold*10000-1)*_count, 1, _count , 1) 
+                            PostAuction(math.floor(_priceGold*10000-1)*_count, math.floor(_priceGold*10000-1)*_count, 1, _count , 1,true) 
                             C_Timer.After(3, function() auSearchItemOnSell(index + 1)  end)
                         end)
                     end) 
