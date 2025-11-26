@@ -348,6 +348,9 @@ function GAUTickerJIANLOU_TSM()
             local itemLink = GetAuctionItemLink("list", index)
             local res = auSearchJLItems[itemname]
             local _, _, _, _, _, _, _, _, _, _, _sellPrice = GetItemInfo(_itemid)
+            if _sellPrice == nil then
+                _sellPrice = 0
+            end
             local _sellGold = _sellPrice/10000
             --print(itemname, avgGold,_sellGold,(_sellGold - avgGold)/avgGold)
             if res then
@@ -355,15 +358,15 @@ function GAUTickerJIANLOU_TSM()
                     -- 抢  
                     ns.HookAu.LogWarn("购买-预备",index,seller,itemLink,stackPrice,count,avgGold)
                     table.insert(waitBuyList,{index,seller,itemLink,stackPrice,count,avgGold})                 
-                elseif avgGold > 0 and (_sellGold - avgGold)/avgGold>0.05 then
-                    ns.HookAu.LogWarn("购买-卖商店",index,seller,itemLink,stackPrice,count,avgGold,_sellGold)
-                    table.insert(waitBuyList,{index,seller,itemLink,stackPrice,count,avgGold}) 
+                -- elseif avgGold > 0 and (_sellGold - avgGold)/avgGold>0.05 then                                    
                 --elseif _level>=80 and  then
                 else
                     --print(GetServerTime(),"不抢",index,seller,itemname,avgGold,count)
                 end
-            
-            elseif seller == "Wwssw" or seller == "老猎手二号" then
+            elseif avgGold > 0 and  (_sellGold-avgGold) > 0 then
+                ns.HookAu.LogWarn("购买-卖商店",index,seller,itemLink,stackPrice,count,avgGold,_sellGold)
+                table.insert(waitBuyList,{index,seller,itemLink,stackPrice,count,avgGold}) 
+            elseif seller == "鸡冠枪" or seller == "暴躁老叔" then
                 ns.HookAu.LogWarn("购买-指定小号",index,seller,itemLink,stackPrice,count,avgGold)
                 table.insert(waitBuyList,{index,seller,itemLink,stackPrice,count,avgGold})  
             end
