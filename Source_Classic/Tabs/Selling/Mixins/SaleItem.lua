@@ -476,6 +476,7 @@ local groupDurationToRadioDuration = {
   [3] = 48,
 }
 function AuctionatorSaleItemMixin:SetDuration()
+  -- print(Auctionator.Config.Get(Auctionator.Config.Options.AUCTION_DURATION));
   self.Duration:SetSelectedValue(
     Auctionator.Config.Get(Auctionator.Config.Options.AUCTION_DURATION)
   )
@@ -668,7 +669,14 @@ local AUCTION_DURATIONS = {
 function AuctionatorSaleItemMixin:GetDuration()
   return AUCTION_DURATIONS[self.Duration:GetValue()]
 end
+function AuctionatorSaleItemMixin:ForceSetPrice()
+  --print(1111);
+  self.StackPrice:SetAmount(1);
+  self.Stacks.NumStacks:SetNumber(1);
+  self.Stacks.StackSize:SetNumber(10);
+  
 
+end
 function AuctionatorSaleItemMixin:PostItem(confirmed)
   if not self:GetPostButtonState() then
     Auctionator.Debug.Message("Trying to post when we can't. Returning")

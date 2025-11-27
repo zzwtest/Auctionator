@@ -131,7 +131,7 @@ local function GAUTicker()
         if #waitBuyList == 0 then 
             ns.HookAu.auDoItemsing = false
             ns.HookAu.LogError("_doBuy call auProcessItemFunc " ,_currentIndex)
-            C_Timer.After(0.5, function() auProcessItemFunc(_currentIndex)   end )
+            C_Timer.After(0.6, function() auProcessItemFunc(_currentIndex)   end )
             return
         end
         local _buyitem = table.remove(waitBuyList,1)
@@ -397,6 +397,14 @@ function GAUTickerJIANLOU_TSM()
             if message == ERR_ITEM_NOT_FOUND  then
                 C_Timer.After(0.1, _doBuy)
             end
+
+            if message == ERR_AUCTION_HIGHER_BID   then
+                C_Timer.After(0.1, _doBuy)
+            end
+            if message == ERR_AUCTION_MIN_BID    then
+                C_Timer.After(0.1, _doBuy)
+            end
+
         elseif eventName == "CHAT_MSG_SYSTEM" then
             local message = ...
             -- 你的出价必须不低于最低竞标价

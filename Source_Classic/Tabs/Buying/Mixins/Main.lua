@@ -26,6 +26,11 @@ function AuctionatorBuyFrameMixin:ToggleHistory()
   end
 end
 
+
+
+
+
+
 AuctionatorBuyFrameMixinForShopping = CreateFromMixins(AuctionatorBuyFrameMixin)
 
 function AuctionatorBuyFrameMixinForShopping:Init()
